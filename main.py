@@ -1,4 +1,4 @@
-import os
+import os, threading
 from pathlib import Path
 from instagrapi import Client
 from dotenv import load_dotenv
@@ -13,6 +13,40 @@ else:
     cl.login_by_sessionid(os.environ["IG_SESSIONID"])
     cl.dump_settings(SESSION_FILE)
 
-user_id = cl.user_id_from_username("iamshashhh")
-medias = cl.user_medias(user_id, 20)
-print(medias)
+target_id = cl.user_id_from_username("iampihooo")
+THREAD_ID = 340282366841710301244259135983410713362
+last_msg_id = None
+
+def handle_direct_message(payload):
+    global last_msg_id
+    try:
+        msg = payload["message"]
+        last_msg_id = msg.get("item_id") or msg.get("id")
+        if msg["user_id"] == int(target_id): print(f"\n{msg['text']}\n> ", end="", flush=True)
+    except Exception:
+        pass
+
+cl.realtime_on("message", handle_direct_message)
+rt = cl.realtime_connect()
+rt.direct_subscribe()
+rt.ping()
+
+def listen():
+    while True:
+        try:
+            rt.read_once()
+        except TimeoutError:
+            pass
+
+threading.Thread(target=listen, daemon=True).start()
+try:
+    while True:
+        text = input("> ")
+        if text.startswith("/react"):
+            emoji = text.split(maxsplit=1)[1] if " " in text else "❤"
+            if last_msg_id:
+                cl.direct_send_reaction(THREAD_ID, last_msg_id, emoji=emoji)
+        elif text.strip():
+            rt.direct_send_text(THREAD_ID, text)
+finally:
+    cl.realtime_disconnect()
