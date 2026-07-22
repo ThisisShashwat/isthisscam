@@ -14,7 +14,8 @@ else:
     cl.dump_settings(SESSION_FILE)
 
 target_id = cl.user_id_from_username("iampihooo")
-THREAD_ID = 340282366841710301244259135983410713362
+thread = cl.direct_thread_by_participants([int(target_id)])
+THREAD_ID = thread["thread"]["thread_id"]
 last_msg_id = None
 
 def handle_direct_message(payload):
@@ -47,6 +48,6 @@ try:
             if last_msg_id:
                 cl.direct_send_reaction(THREAD_ID, last_msg_id, emoji=emoji)
         elif text.strip():
-            rt.direct_send_text(THREAD_ID, text)
+            cl.direct_send(text, thread_ids=[THREAD_ID])
 finally:
     cl.realtime_disconnect()

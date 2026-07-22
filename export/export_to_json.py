@@ -1,13 +1,25 @@
-import json
+import json,os
 
 from instagrapi import Client
+from pathlib import Path
+
+from dotenv import load_dotenv
+load_dotenv()
 
 SESSION_FILE = "../ig_session.json"
-THREAD_ID = 340282366841710301244259135983410713362
+cl = Client()
+
+if Path(SESSION_FILE).exists():
+    cl.load_settings(SESSION_FILE)
+else:
+    cl.login_by_sessionid(os.environ["IG_SESSIONID"])
+    cl.dump_settings(SESSION_FILE)
+
 OUTPUT_FILE = "thread_export.json"
 
-cl = Client()
-cl.load_settings(SESSION_FILE)
+target_id = cl.user_id_from_username("ishaanirl.exe")
+thread = cl.direct_thread_by_participants([int(target_id)])
+THREAD_ID = thread["thread"]["thread_id"]
 
 messages = cl.direct_messages(THREAD_ID, amount=0)
 
