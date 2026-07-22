@@ -21,7 +21,7 @@ import json
 with open("thread_sessions.json", encoding="utf-8") as f:
     sessions = json.load(f)
 
-SESSION_INDEX = 1  # 1-based, change to whichever session looks wrong
+SESSION_INDEX = 3
 
 s = sessions[SESSION_INDEX - 1]
 print(f"Session {SESSION_INDEX}: {s['start']} to {s['end']}  ({len(s['turns'])} turns)\n")
