@@ -5,7 +5,14 @@ with open("thread_export.json", encoding="utf-8") as f:
 
 clean = []
 for m in messages:
-    entry = {"timestamp": m["timestamp"], "sender": "you" if m["is_sent_by_viewer"] else "them", "text": m["text"], }
+    entry = {
+        "timestamp": m["timestamp"],
+        "sender": "you" if m["is_sent_by_viewer"] else "them",
+        "text": m["text"],
+    }
+    if m.get("xma_share"):
+        entry["is_share"] = True
+        entry["shared_url"] = m["xma_share"].get("target_url") or m["xma_share"].get("video_url")
     if m.get("reactions"):
         entry["reactions"] = [r["emoji"] for r in m["reactions"].get("emojis", [])]
     if m.get("reply"):
