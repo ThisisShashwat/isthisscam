@@ -1,0 +1,587 @@
+{
+  "animated_media": {
+    "id": "str",
+    "images": {
+      "fixed_height": {
+        "height": "str",
+        "mp4": "str",
+        "mp4_size": "str",
+        "size": "str",
+        "url": "str",
+        "webp": "str",
+        "webp_size": "str",
+        "width": "str"
+      }
+    },
+    "is_random": "bool",
+    "is_sticker": "bool",
+    "user": {
+      "is_verified": "bool",
+      "username": "str"
+    }
+  },
+  "client_context": "str",
+  "id": "str",
+  "is_sent_by_viewer": "bool",
+  "is_shh_mode": "bool",
+  "item_type": "str",
+  "media": {
+    "audio_url": "null|str",
+    "id": "str",
+    "media_type": "int",
+    "thumbnail_url": "null|str",
+    "user": {
+      "fbid_v2": "str",
+      "friendship_status": {
+        "following": "bool",
+        "incoming_request": "bool",
+        "is_bestie": "bool",
+        "is_feed_favorite": "bool",
+        "is_private": "bool",
+        "is_restricted": "bool",
+        "outgoing_request": "bool",
+        "user_id": "str"
+      },
+      "full_name": "str",
+      "interop_messaging_user_fbid": "str",
+      "is_private": "bool",
+      "is_verified": "bool",
+      "pk": "str",
+      "profile_pic_url": "str",
+      "strong_id__": "str",
+      "username": "str"
+    }
+  },
+  "placeholder": {
+    "detail_reason": "int",
+    "is_linked": "bool",
+    "message": "str",
+    "reason": "int",
+    "title": "str"
+  },
+  "raw_xma": {
+    "generic_xma": [
+      {
+        "attachment_id": "str",
+        "caption_body_text": "null|str",
+        "cta_buttons": [
+          {
+            "action_url": "str",
+            "cta_type": "str"
+          }
+        ],
+        "favicon_url_info": {
+          "fallback": {
+            "url": "str"
+          },
+          "url": "str",
+          "url_expiration_timestamp_us": "int"
+        },
+        "favicons_url_info": [
+          {
+            "fallback": {
+              "url": "str"
+            },
+            "url": "str",
+            "url_expiration_timestamp_us": "int"
+          }
+        ],
+        "header_icon_height": "int|null",
+        "header_icon_width": "int|null",
+        "ig_template_type": "null|str",
+        "is_borderless": "bool|null",
+        "is_quoted": "bool|null",
+        "is_sharable": "bool|null",
+        "max_subtitle_num_of_lines": "int",
+        "max_title_num_of_lines": "int",
+        "playable_height": "int|null",
+        "playable_width": "int|null",
+        "preview_height": "int|null",
+        "preview_image_decoration_type": "int|null",
+        "preview_media_fbid": "int|null",
+        "preview_url": "null|str",
+        "preview_url_info": {
+          "fallback": {
+            "url": "str"
+          },
+          "height": "int",
+          "url": "str",
+          "width": "int"
+        },
+        "preview_url_mime_type": "null|str",
+        "preview_width": "int|null",
+        "should_refresh": "bool",
+        "should_respect_server_preview_size": "bool|null",
+        "sticker_type": "null|str",
+        "subtitle_text": "null|str",
+        "title_text": "null|str",
+        "xma_layout_type": "int"
+      }
+    ],
+    "xma_clip": [
+      {
+        "caption_body_text": "null|str",
+        "header_icon_height": "int|null",
+        "header_icon_url": "str",
+        "header_icon_url_info": {
+          "fallback": {
+            "url": "str"
+          },
+          "height": "int",
+          "url": "str",
+          "url_expiration_timestamp_us": "int",
+          "width": "int"
+        },
+        "header_icon_width": "int|null",
+        "header_icons_url_info": [
+          {
+            "fallback": {
+              "url": "str"
+            },
+            "height": "int",
+            "url": "str",
+            "url_expiration_timestamp_us": "int",
+            "width": "int"
+          }
+        ],
+        "header_title_text": "null|str",
+        "ig_product_type": "int",
+        "ig_template_type": "null|str",
+        "is_sharable": "bool|null",
+        "max_subtitle_num_of_lines": "int",
+        "max_title_num_of_lines": "int",
+        "placeholder_reason": "int",
+        "playable_height": "int|null",
+        "playable_width": "int|null",
+        "preview_height": "int|null",
+        "preview_image_decoration_type": "int|null",
+        "preview_media_fbid": "int|null",
+        "preview_url": "null|str",
+        "preview_url_info": {
+          "fallback": {
+            "url": "str"
+          },
+          "height": "int",
+          "url": "str",
+          "url_expiration_timestamp_us": "int",
+          "width": "int"
+        },
+        "preview_url_mime_type": "null|str",
+        "preview_width": "int|null",
+        "serialized_content_ref": "str",
+        "should_refresh": "bool",
+        "target_url": "null|str",
+        "title_text": "null|str",
+        "verified_type": "int|null",
+        "xma_layout_type": "int"
+      }
+    ],
+    "xma_media_share": [
+      {
+        "header_icon_height": "int",
+        "header_icon_url": "str",
+        "header_icon_url_info": {
+          "fallback": {
+            "url": "str"
+          },
+          "height": "int",
+          "url": "str",
+          "url_expiration_timestamp_us": "int",
+          "width": "int"
+        },
+        "header_icon_width": "int",
+        "header_icons_url_info": [
+          {
+            "fallback": {
+              "url": "str"
+            },
+            "height": "int",
+            "url": "str",
+            "url_expiration_timestamp_us": "int",
+            "width": "int"
+          }
+        ],
+        "header_title_text": "str",
+        "ig_product_type": "int",
+        "is_sharable": "bool",
+        "max_subtitle_num_of_lines": "int",
+        "max_title_num_of_lines": "int",
+        "overlay_description": "str",
+        "overlay_layout": "int",
+        "overlay_title": "str",
+        "playable_height": "int",
+        "playable_width": "int",
+        "preview_height": "int",
+        "preview_image_decoration_type": "int|null",
+        "preview_media_fbid": "int",
+        "preview_url": "str",
+        "preview_url_info": {
+          "fallback": {
+            "url": "str"
+          },
+          "height": "int",
+          "url": "str",
+          "url_expiration_timestamp_us": "int",
+          "width": "int"
+        },
+        "preview_url_mime_type": "str",
+        "preview_width": "int",
+        "serialized_content_ref": "str",
+        "should_refresh": "bool",
+        "target_url": "str",
+        "title_text": "null|str",
+        "verified_type": "int"
+      }
+    ],
+    "xma_story_share": [
+      {
+        "header_icon_height": "int",
+        "header_icon_url": "str",
+        "header_icon_url_info": {
+          "fallback": {
+            "url": "str"
+          },
+          "height": "int",
+          "url": "str",
+          "url_expiration_timestamp_us": "int",
+          "width": "int"
+        },
+        "header_icon_width": "int",
+        "header_icons_url_info": [
+          {
+            "fallback": {
+              "url": "str"
+            },
+            "height": "int",
+            "url": "str",
+            "url_expiration_timestamp_us": "int",
+            "width": "int"
+          }
+        ],
+        "header_title_text": "str",
+        "is_quoted": "bool",
+        "is_sharable": "bool",
+        "max_subtitle_num_of_lines": "int",
+        "max_title_num_of_lines": "int",
+        "playable_height": "int",
+        "playable_width": "int",
+        "preview_height": "int",
+        "preview_image_decoration_type": "int",
+        "preview_media_fbid": "int",
+        "preview_url": "str",
+        "preview_url_info": {
+          "fallback": {
+            "url": "str"
+          },
+          "height": "int",
+          "url": "str",
+          "url_expiration_timestamp_us": "int",
+          "width": "int"
+        },
+        "preview_url_mime_type": "str",
+        "preview_width": "int",
+        "serialized_content_ref": "str",
+        "should_refresh": "bool",
+        "target_url": "str",
+        "xma_content_type": "int",
+        "xma_layout_type": "int"
+      }
+    ]
+  },
+  "reactions": {
+    "emojis": [
+      {
+        "client_context": "str",
+        "emoji": "str",
+        "sender_id": "int",
+        "super_react_type": "str",
+        "timestamp": "str"
+      }
+    ]
+  },
+  "reply": {
+    "id": "str",
+    "is_sent_by_viewer": "bool",
+    "is_shh_mode": "bool",
+    "item_type": "str",
+    "media": {
+      "id": "str",
+      "media_type": "int",
+      "thumbnail_url": "str",
+      "user": {
+        "fbid_v2": "str",
+        "friendship_status": {
+          "following": "bool",
+          "incoming_request": "bool",
+          "is_bestie": "bool",
+          "is_feed_favorite": "bool",
+          "is_private": "bool",
+          "is_restricted": "bool",
+          "outgoing_request": "bool",
+          "user_id": "str"
+        },
+        "full_name": "str",
+        "interop_messaging_user_fbid": "str",
+        "is_private": "bool",
+        "is_verified": "bool",
+        "pk": "str",
+        "profile_pic_url": "str",
+        "strong_id__": "str",
+        "username": "str"
+      }
+    },
+    "placeholder": {
+      "detail_reason": "int",
+      "is_linked": "bool",
+      "message": "str",
+      "reason": "int",
+      "title": "str"
+    },
+    "raw_xma": {
+      "xma_clip": [
+        {
+          "caption_body_text": "null|str",
+          "header_icon_height": "int|null",
+          "header_icon_url": "str",
+          "header_icon_url_info": {
+            "fallback": {
+              "url": "str"
+            },
+            "height": "int",
+            "url": "str",
+            "url_expiration_timestamp_us": "int",
+            "width": "int"
+          },
+          "header_icon_width": "int|null",
+          "header_icons_url_info": [
+            {
+              "fallback": {
+                "url": "str"
+              },
+              "height": "int",
+              "url": "str",
+              "url_expiration_timestamp_us": "int",
+              "width": "int"
+            }
+          ],
+          "header_title_text": "null|str",
+          "ig_product_type": "int",
+          "ig_template_type": "null|str",
+          "is_sharable": "bool|null",
+          "max_subtitle_num_of_lines": "int",
+          "max_title_num_of_lines": "int",
+          "placeholder_reason": "int",
+          "playable_height": "int|null",
+          "playable_width": "int|null",
+          "preview_height": "int|null",
+          "preview_image_decoration_type": "int|null",
+          "preview_media_fbid": "int|null",
+          "preview_url": "null|str",
+          "preview_url_info": {
+            "fallback": {
+              "url": "str"
+            },
+            "height": "int",
+            "url": "str",
+            "url_expiration_timestamp_us": "int",
+            "width": "int"
+          },
+          "preview_url_mime_type": "null|str",
+          "preview_width": "int|null",
+          "serialized_content_ref": "str",
+          "should_refresh": "bool",
+          "target_url": "null|str",
+          "title_text": "null|str",
+          "verified_type": "int|null",
+          "xma_layout_type": "int"
+        }
+      ],
+      "xma_media_share": [
+        {
+          "header_icon_height": "int",
+          "header_icon_url": "str",
+          "header_icon_url_info": {
+            "fallback": {
+              "url": "str"
+            },
+            "height": "int",
+            "url": "str",
+            "url_expiration_timestamp_us": "int",
+            "width": "int"
+          },
+          "header_icon_width": "int",
+          "header_icons_url_info": [
+            {
+              "fallback": {
+                "url": "str"
+              },
+              "height": "int",
+              "url": "str",
+              "url_expiration_timestamp_us": "int",
+              "width": "int"
+            }
+          ],
+          "header_title_text": "str",
+          "ig_product_type": "int",
+          "is_sharable": "bool",
+          "max_subtitle_num_of_lines": "int",
+          "max_title_num_of_lines": "int",
+          "overlay_description": "str",
+          "overlay_layout": "int",
+          "overlay_title": "str",
+          "playable_height": "int",
+          "playable_width": "int",
+          "preview_height": "int",
+          "preview_image_decoration_type": "int|null",
+          "preview_media_fbid": "int",
+          "preview_url": "str",
+          "preview_url_info": {
+            "fallback": {
+              "url": "str"
+            },
+            "height": "int",
+            "url": "str",
+            "url_expiration_timestamp_us": "int",
+            "width": "int"
+          },
+          "preview_url_mime_type": "str",
+          "preview_width": "int",
+          "serialized_content_ref": "str",
+          "should_refresh": "bool",
+          "target_url": "str",
+          "title_text": "null|str"
+        }
+      ]
+    },
+    "text": "null|str",
+    "timestamp": "str",
+    "user_id": "str",
+    "visual_media": {
+      "media": {
+        "id": "str",
+        "image_versions2": {
+          "candidates": [
+            {
+              "fallback": {
+                "url": "str"
+              },
+              "height": "int",
+              "scans_profile": "str",
+              "url": "str",
+              "url_expiration_timestamp_us": "str",
+              "width": "int"
+            }
+          ]
+        },
+        "media_id": "int",
+        "media_type": "int",
+        "organic_tracking_token": "str",
+        "original_height": "int",
+        "original_width": "int",
+        "user": {
+          "account_type": "int",
+          "fbid_v2": "int",
+          "friendship_status": {
+            "blocking": "bool",
+            "is_messaging_only_blocking": "bool",
+            "is_messaging_pseudo_blocking": "bool",
+            "is_unavailable": "bool"
+          },
+          "full_name": "str",
+          "has_ig_profile": "bool",
+          "id": "str",
+          "interop_messaging_user_fbid": "int",
+          "is_creator_agent_enabled": "bool",
+          "is_creator_automated_response_enabled": "bool",
+          "is_eligible_for_ai_bot_group_chats": "bool",
+          "is_private": "bool",
+          "is_shared_account": "bool",
+          "is_shared_account_with_messaging_access": "bool",
+          "is_using_unified_inbox_for_direct": "bool",
+          "is_verified": "bool",
+          "pk": "int",
+          "pk_id": "str",
+          "profile_pic_url": "str",
+          "short_name": "str",
+          "strong_id__": "str",
+          "username": "str"
+        }
+      },
+      "playback_duration_secs": "int",
+      "seen_count": "int",
+      "url_expire_at_secs": "int",
+      "view_mode": "str"
+    }
+  },
+  "text": "null|str",
+  "thread_id": "int",
+  "timestamp": "str",
+  "user_id": "str",
+  "visual_media": {
+    "media": {
+      "id": "str",
+      "image_versions2": {
+        "candidates": [
+          {
+            "fallback": {
+              "url": "str"
+            },
+            "height": "int",
+            "scans_profile": "str",
+            "url": "str",
+            "url_expiration_timestamp_us": "str",
+            "width": "int"
+          }
+        ]
+      },
+      "media_id": "int",
+      "media_type": "int",
+      "organic_tracking_token": "str",
+      "original_height": "int",
+      "original_width": "int",
+      "user": {
+        "account_type": "int",
+        "fbid_v2": "int",
+        "friendship_status": {
+          "blocking": "bool",
+          "is_messaging_only_blocking": "bool",
+          "is_messaging_pseudo_blocking": "bool",
+          "is_unavailable": "bool"
+        },
+        "full_name": "str",
+        "has_ig_profile": "bool",
+        "id": "str",
+        "interop_messaging_user_fbid": "int",
+        "is_creator_agent_enabled": "bool",
+        "is_creator_automated_response_enabled": "bool",
+        "is_eligible_for_ai_bot_group_chats": "bool",
+        "is_private": "bool",
+        "is_shared_account": "bool",
+        "is_shared_account_with_messaging_access": "bool",
+        "is_using_unified_inbox_for_direct": "bool",
+        "is_verified": "bool",
+        "pk": "int",
+        "pk_id": "str",
+        "profile_pic_url": "str",
+        "short_name": "str",
+        "strong_id__": "str",
+        "username": "str"
+      }
+    },
+    "playback_duration_secs": "int",
+    "seen_count": "int",
+    "url_expire_at_secs": "int",
+    "view_mode": "str"
+  },
+  "xma_share": {
+    "header_icon_height": "int",
+    "header_icon_url": "str",
+    "header_icon_width": "int",
+    "header_title_text": "str",
+    "preview_media_fbid": "str",
+    "preview_url": "str",
+    "preview_url_mime_type": "str",
+    "title": "null|str",
+    "video_url": "str"
+  }
+}
