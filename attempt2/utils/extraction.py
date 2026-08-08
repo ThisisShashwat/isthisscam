@@ -1,7 +1,7 @@
 from typing import List
 
-from utils.general_utils import get_field, parse_datetime
-from utils.models import Media, Reactions, Messages
+from utils.general_utils import get_field
+from utils.models import Messages
 
 """
 
@@ -26,12 +26,11 @@ action_log
 """
 
 
-def extract_media(msg) -> List[Media]:
+def extract_media(msg):
 
-
-    media_list: List[Media] = []
-    message_id = str(get_field(msg, "id"))
     item_type = get_field(msg, "item_type")
+    media_type = None
+    media_urls = None
 
     # 1. CAROUSEL / CUTOUT
 
@@ -45,15 +44,8 @@ def extract_media(msg) -> List[Media]:
         if sticker_type or attachment_id.startswith("cutout_"):
             sticker_url = get_field(first_item, "preview_url_info", "url") or get_field(first_item, "preview_url")
             if sticker_url:
-                media_list.append(
-                    Media(
-                        message_id=message_id,
-                        item_type="sticker",
-                        title=f"Sticker ({sticker_type or 'cutout'})",
-                        url=[str(sticker_url)]
-                    )
-                )
-            return media_list
+                media_type="sticker"
+                media_urls=[str(sticker_url)]
 
         # carousel
         urls = []
@@ -67,15 +59,8 @@ def extract_media(msg) -> List[Media]:
                     urls.append(p_url)
         if urls:
             kind = "carousel" if len(urls) > 1 else "photo"
-            media_list.append(
-                Media(
-                    message_id=message_id,
-                    item_type=kind,
-                    title=f"Carousel album ({len(urls)} images)" if kind == "carousel" else None,
-                    url=[str(u) for u in urls if u]
-                )
-            )
-        return media_list
+            media_type=kind
+            media_urls=[str(u) for u in urls if u]
 
     # 2. reel & post
 
@@ -103,15 +88,8 @@ def extract_media(msg) -> List[Media]:
         if item_type == "xma_clip" or (target_url and "/reel/" in str(target_url)):
             media_kind = "reel"
         if target_url:
-            media_list.append(
-                Media(
-                    message_id=message_id,
-                    item_type=media_kind,
-                    title=title,
-                    url=[str(target_url)]
-                )
-            )
-        return media_list
+            media_type=media_kind
+            media_urls=[str(target_url)]
 
     # 3. gif and stickers
 
@@ -130,15 +108,8 @@ def extract_media(msg) -> List[Media]:
                 urls.append(str(fb_url))
         kind = "sticker" if is_sticker else "animated_gif"
         if urls:
-            media_list.append(
-                Media(
-                    message_id=message_id,
-                    item_type=kind,
-                    title=alt_text if alt_text else None,
-                    url=urls
-                )
-            )
-        return media_list
+            media_type=kind
+            media_urls = urls
 
     # 4. vms
 
@@ -148,15 +119,8 @@ def extract_media(msg) -> List[Media]:
             or get_field(msg, "voice_media", "media", "audio", "audio_src")
         )
         if audio_url:
-            media_list.append(
-                Media(
-                    message_id=message_id,
-                    item_type="voice_message",
-                    title=None,
-                    url=[str(audio_url)]  # NO THUMBNAIL!
-                )
-            )
-        return media_list
+            media_type="voice_message"
+            media_urls=[str(audio_url)]
 
     # 5. raven
 
@@ -181,15 +145,8 @@ def extract_media(msg) -> List[Media]:
         kind = "video" if m_type == 2 else "photo"
         title_info = f"Disappearing ({view_mode})" if view_mode != "permanent" else None
 
-        media_list.append(
-            Media(
-                message_id=message_id,
-                item_type=kind,
-                title=title_info,
-                url=urls
-            )
-        )
-        return media_list
+        media_type=kind
+        media_urls=urls
 
     # 6. pics & vids
 
@@ -216,45 +173,42 @@ def extract_media(msg) -> List[Media]:
         caption = get_field(media_obj, "caption_text") or get_field(media_obj, "title")
         kind = "video" if m_type == 2 else ("carousel" if m_type == 8 else "photo")
         if urls:
-            media_list.append(
-                Media(
-                    message_id=message_id,
-                    item_type=kind,
-                    title=caption,
-                    url=urls
-                )
-            )
-        return media_list
-    return media_list
+            media_type=kind
+            media_urls=urls
+
+    return {
+        "media_type": media_type,
+        "media_urls": media_urls,
+    }
 
 
-
-def extract_reactions(msg, viewer_id: str) -> List[Reactions]:
-    reactions_list: List[Reactions] = []
-    message_id = get_field(msg, "id")
-    emoji_entries = get_field(msg, "reactions","emojis") or []
-
-    for entry in emoji_entries:
-        emoji = get_field(entry, "emoji")
-        sender_id = get_field(entry, "sender_id")
-        timestamp = get_field(entry, "timestamp")
-
-        if not emoji or sender_id is None or timestamp is None:
-            continue
-
-        sender_id = str(sender_id)
-
-        reactions_list.append(
-            Reactions(
-                message_id=message_id,
-                sender_id=sender_id,
-                is_sent_by_viewer=(sender_id == str(viewer_id)),
-                emoji=emoji,
-                timestamp=timestamp,
-            )
-        )
-
-    return reactions_list
+#
+# def extract_reactions(msg, viewer_id: str) -> List[Reactions]:
+#     reactions_list: List[Reactions] = []
+#     message_id = get_field(msg, "id")
+#     emoji_entries = get_field(msg, "reactions","emojis") or []
+#
+#     for entry in emoji_entries:
+#         emoji = get_field(entry, "emoji")
+#         sender_id = get_field(entry, "sender_id")
+#         timestamp = get_field(entry, "timestamp")
+#
+#         if not emoji or sender_id is None or timestamp is None:
+#             continue
+#
+#         sender_id = str(sender_id)
+#
+#         reactions_list.append(
+#             Reactions(
+#                 message_id=message_id,
+#                 sender_id=sender_id,
+#                 is_sent_by_viewer=(sender_id == str(viewer_id)),
+#                 emoji=emoji,
+#                 timestamp=timestamp,
+#             )
+#         )
+#
+#     return reactions_list
 
 
 def extract_message(msg) -> Messages:
@@ -270,6 +224,22 @@ def extract_message(msg) -> Messages:
     text = get_field(msg, "text")
     reply_id = get_field(msg, "reply", "id")
 
+    extracted_media = extract_media(msg)
+
+    media_type = extracted_media["media_type"]
+    media_urls = extracted_media["media_urls"]
+
+    # MEDIA_TYPES = [
+    #     "photo",
+    #     "carousel",
+    #     "sticker",
+    #     "post",
+    #     "reel",
+    #     "animated_gif",
+    #     "voice_message",
+    #     "video",
+    # ]
+
     return Messages(
         id=message_id,
         thread_id=str(thread_id),
@@ -278,7 +248,11 @@ def extract_message(msg) -> Messages:
         timestamp=timestamp,
         is_sent_by_viewer=is_sent_by_viewer,
         item_type=item_type,
+
         text=text,
         reply_id=reply_id,
+
+        media_type=media_type,
+        media_urls=media_urls,
     )
 
