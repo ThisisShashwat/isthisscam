@@ -2,6 +2,7 @@ from typing import List
 
 from utils.general_utils import get_field
 from utils.media_handler import download_all_urls
+from utils.media_summarise import summarise_files
 from utils.models import Messages
 
 """
@@ -246,6 +247,11 @@ def extract_message(msg, cl, download=False, summary=False) -> Messages:
     else:
         media_local_file_paths = None
 
+    if summary and media_local_file_paths:
+        media_ai_summary = summarise_files(media_local_file_paths)
+    else:
+        media_ai_summary = None
+
 
     return Messages(
         id=message_id,
@@ -262,5 +268,6 @@ def extract_message(msg, cl, download=False, summary=False) -> Messages:
         media_type=media_type,
         media_urls=media_urls,
         media_local_file_paths=media_local_file_paths,
+        media_ai_summary=media_ai_summary
     )
 

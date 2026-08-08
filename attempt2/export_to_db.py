@@ -15,6 +15,6 @@ init_db()
 
 with Session(engine) as session:
     for msg in messages:
-        extracted_message = extract_message(msg, cl, download=True, summary=True)
+        extracted_message = extract_message(msg, cl, download=True, summary=False)
         session.add(extracted_message)
     session.commit()
