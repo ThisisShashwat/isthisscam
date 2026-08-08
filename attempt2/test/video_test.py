@@ -15,7 +15,7 @@ client = OpenAI(api_key=OPENROUTER_API_KEY, base_url="https://ai.hackclub.com/pr
 
 
 
-audio_path = r"E:\PythonProject\scamming\attempt2\media\32946349913594990503845414400163840_0_voice_message.m4a"
+audio_path = r"E:\PythonProject\scamming\attempt2\media\32946349913594990503845414400163840_0_voice_message.mp4"
 
 with open(audio_path, "rb") as f:
     audio = base64.b64encode(f.read()).decode()

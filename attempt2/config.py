@@ -10,3 +10,6 @@ DB_PATH= "insta.db"
 OPENROUTER_API_KEY= os.environ["OPENROUTER_API_KEY"]
 
 MEDIA_DIR = "media"
+
+
+SUMMARY_MODEL = "google/gemini-3.5-flash-lite"
