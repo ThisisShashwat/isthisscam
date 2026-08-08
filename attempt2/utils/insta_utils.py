@@ -1,10 +1,13 @@
 import os
+from dotenv import load_dotenv
+
+from config import RECIPIENT_USERNAME
+
+load_dotenv()
 
 from instagrapi import Client
 from pathlib import Path
 
-from dotenv import load_dotenv
-load_dotenv()
 
 def get_client(session_file="default"):
 
@@ -26,6 +29,6 @@ def get_client(session_file="default"):
     return cl
 
 def get_thread_id(cl):
-    target_id = cl.user_id_from_username("ishaanirl.exe")
+    target_id = cl.user_id_from_username(RECIPIENT_USERNAME)
     thread = cl.direct_thread_by_participants([int(target_id)])
     return thread["thread"]["thread_id"]

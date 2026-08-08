@@ -2,10 +2,11 @@ import json
 
 from attempt2.utils.insta_utils import get_client, get_thread_id
 
-OUTPUT_FILE = "thread_export.json"
+OUTPUT_FILE = "test/thread_export.json"
 
 cl = get_client()
-THREAD_ID = get_thread_id(cl)
+# THREAD_ID = get_thread_id(cl)
+THREAD_ID = 340282366841710301281153262129164814061
 
 messages = cl.direct_messages(THREAD_ID, amount=0)
 
