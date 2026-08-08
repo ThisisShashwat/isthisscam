@@ -1,6 +1,7 @@
 from typing import List
 
 from utils.general_utils import get_field
+from utils.media_handler import download_all_urls
 from utils.models import Messages
 
 """
@@ -211,7 +212,7 @@ def extract_media(msg):
 #     return reactions_list
 
 
-def extract_message(msg) -> Messages:
+def extract_message(msg, cl, download=False, summary=False) -> Messages:
     message_id = get_field(msg, "id")
     user_id = get_field(msg, "user_id")
     thread_id = get_field(msg, "thread_id")
@@ -240,6 +241,12 @@ def extract_message(msg) -> Messages:
     #     "video",
     # ]
 
+    if download and media_urls and media_type:
+        media_local_file_paths = download_all_urls(media_urls, media_type, cl, message_id)
+    else:
+        media_local_file_paths = None
+
+
     return Messages(
         id=message_id,
         thread_id=str(thread_id),
@@ -254,5 +261,6 @@ def extract_message(msg) -> Messages:
 
         media_type=media_type,
         media_urls=media_urls,
+        media_local_file_paths=media_local_file_paths,
     )
 

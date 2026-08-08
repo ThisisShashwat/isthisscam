@@ -21,8 +21,8 @@ class Messages(SQLModel, table=True):
     media_type: Optional[str] = Field(default=None)
     media_urls: Optional[list] = Field(default=None, sa_column=Column(JSON))
 
+    media_local_file_paths: Optional[list] = Field(default=None, sa_column=Column(JSON))
     media_ai_summary: Optional[str] = Field(default=None)
-    media_local_file_path: Optional[str] = Field(default=None)
 
 
     # media_caption: Optional[str] = Field(default=None)
