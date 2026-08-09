@@ -6,8 +6,13 @@ load_dotenv()
 
 
 RECIPIENT_USERNAME= "ishaanirl.exe"
+IG_SESSIONID = os.environ["IG_SESSIONID"]
+IG_SESSIONID_OTHER = os.environ["IG_SESSIONID_OTHER"]
+
+
 DB_PATH= "insta.db"
 OPENROUTER_API_KEY= os.environ["OPENROUTER_API_KEY"]
+
 
 MEDIA_DIR = "media"
 
