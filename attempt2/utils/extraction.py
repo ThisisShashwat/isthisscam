@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 from utils.general_utils import get_field
@@ -215,10 +216,18 @@ def extract_media(msg):
 
 def extract_message(msg, cl, media_download=False, media_summary=False) -> Messages:
     message_id = get_field(msg, "id")
+    if not message_id:
+        if "mid.$" in get_field(msg, "message_id"):
+            message_id = get_field(msg, "item_id")
     user_id = get_field(msg, "user_id")
     thread_id = get_field(msg, "thread_id")
 
     timestamp = get_field(msg, "timestamp")
+
+    if not isinstance(timestamp, datetime.datetime):
+        timestamp = datetime.datetime(2026, 8, 10, 5, 12, 12, 677000,
+                  tzinfo=datetime.timezone(datetime.timedelta(hours=5, minutes=30)))
+
     is_sent_by_viewer = get_field(msg, "is_sent_by_viewer")
 
     item_type = get_field(msg, "item_type")
@@ -242,7 +251,7 @@ def extract_message(msg, cl, media_download=False, media_summary=False) -> Messa
     #     "video",
     # ]
 
-    if media_download and media_urls and media_type:
+    if (media_download or media_summary) and media_urls and media_type:
         media_local_file_paths = download_all_urls(media_urls, media_type, cl, message_id)
     else:
         media_local_file_paths = None
@@ -254,16 +263,16 @@ def extract_message(msg, cl, media_download=False, media_summary=False) -> Messa
 
 
     return Messages(
-        id=message_id,
+        id=str(message_id),
         thread_id=str(thread_id),
-        user_id=user_id,
+        user_id=str(user_id),
 
         timestamp=timestamp,
         is_sent_by_viewer=is_sent_by_viewer,
         item_type=item_type,
 
         text=text,
-        reply_id=reply_id,
+        reply_id=str(reply_id),
 
         media_type=media_type,
         media_urls=media_urls,

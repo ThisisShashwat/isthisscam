@@ -35,6 +35,7 @@ def get_thread_id(cl):
 def fetch_new_messages(thread_id, cl, session, page_limit=20):
     latest_known_id = get_latest_message_id(session, thread_id)
 
+    print(latest_known_id)
     if latest_known_id is None:
         return sorted(cl.direct_thread(thread_id, amount=0).messages, key=lambda m: m.timestamp)
 
@@ -54,9 +55,9 @@ def fetch_new_messages(thread_id, cl, session, page_limit=20):
 
         result = cl.private_request(f"direct_v2/threads/{thread_id}/", params=params)
         thread_data = result["thread"]
-
         stop = False
         for item in thread_data["items"]:
+            print(item.get("item_id"))
             if item.get("item_id") == str(latest_known_id):
                 stop = True
                 break
