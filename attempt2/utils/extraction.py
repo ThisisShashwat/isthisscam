@@ -213,7 +213,7 @@ def extract_media(msg):
 #     return reactions_list
 
 
-def extract_message(msg, cl, download=False, summary=False) -> Messages:
+def extract_message(msg, cl, media_download=False, media_summary=False) -> Messages:
     message_id = get_field(msg, "id")
     user_id = get_field(msg, "user_id")
     thread_id = get_field(msg, "thread_id")
@@ -242,12 +242,12 @@ def extract_message(msg, cl, download=False, summary=False) -> Messages:
     #     "video",
     # ]
 
-    if download and media_urls and media_type:
+    if media_download and media_urls and media_type:
         media_local_file_paths = download_all_urls(media_urls, media_type, cl, message_id)
     else:
         media_local_file_paths = None
 
-    if summary and media_local_file_paths:
+    if media_summary and media_local_file_paths:
         media_ai_summary = summarise_files(media_local_file_paths)
     else:
         media_ai_summary = None
