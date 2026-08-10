@@ -1,5 +1,3 @@
-import json
-
 from sqlmodel import Session
 
 from export_to_db import ingest_new_messages
@@ -18,29 +16,32 @@ def handle_direct_message(payload):
     print(extracted_msg)
     with Session(engine) as session:
         with session.begin():
-            session.add(extracted_msg)
+            session.merge(extracted_msg)
 
 
 
-print("init_db")
+print("Initialing db")
 init_db()
-print("after init_db")
+print("Done")
 
-print("before ingest_new_messages")
+print("Stating ingest_new_messages")
 ingest_new_messages(cl, THREAD_ID)
-print("after ingest_new_messages")
+print("Done")
 
 cl.realtime_on("message", handle_direct_message)
 
-print("before realtime_connect")
+print("Subscribing to realtime_connect")
 rt = cl.realtime_connect()
 rt.direct_subscribe()
-print("after realtime_connect")
+print("Ready...")
 
 try:
     rt.ping()
-    rt.direct_send_text(THREAD_ID, "Hello from MQTT")
+    # rt.direct_send_text(THREAD_ID, "Hello from MQTT")
     while True:
-        rt.read_once()
+        try:
+            rt.read_once()
+        except TimeoutError:
+            continue
 finally:
     cl.realtime_disconnect()

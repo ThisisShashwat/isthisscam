@@ -61,7 +61,10 @@ def fetch_new_messages(thread_id, cl, session, page_limit=20):
             if item.get("item_id") == str(latest_known_id):
                 stop = True
                 break
-            items.append(item)
+
+            if item.get("item_id") not in {i.get("item_id") for i in items}:
+                items.append(item)
+            # items.append(item)
 
         if stop:
             break
