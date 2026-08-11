@@ -3,12 +3,13 @@ from sqlmodel import Session
 from export_to_db import ingest_new_messages
 from utils.db_utils import init_db, engine
 from utils.extraction import extract_message
-from utils.insta_utils import get_client
+from utils.insta_utils import get_client, get_thread_id
 
 print("before getclient")
 cl = get_client()
 print("after getclient")
-THREAD_ID = 340282366841710301281153262129164814061
+
+THREAD_ID = get_thread_id(cl, test=True)
 
 def handle_direct_message(payload):
     msg = cl.direct_message(payload["message"]["thread_id"], payload["message"]["item_id"], amount=20)
