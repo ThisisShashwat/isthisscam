@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>Insta</title>
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script async src="https://www.instagram.com/embed.js"></script>
+
+    <style>
+
+        body {
+            font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+            background: #e9edf1;
+            margin: 0;
+        }
+
+        .chat {
+            /*max-width: 700px;*/
+            margin: 0 auto;
+            padding: 16px;
+            height: 100vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            scroll-behavior: smooth;
+        }
+
+        .bubble {
+            max-width: 65%;
+            padding: 8px 12px;
+            border-radius: 16px;
+            line-height: 1.35;
+            font-size: 14px;
+            word-wrap: break-word;
+            scroll-margin-top: 35vh;
+        }
+
+        .them {
+            align-self: flex-start;
+            background: #fff;
+            border-bottom-left-radius: 4px;
+        }
+
+        .me {
+            align-self: flex-end;
+            background: #224238;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .meta {
+            font-size: 10px;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .me .meta {
+            color: #d7e9ff;
+        }
+
+        .media img, .media video {
+            max-width: 100%;
+            max-height: 240px;
+            width: auto;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+            margin-top: 4px;
+            cursor: pointer;
+        }
+
+        /*.media audio {*/
+        /*    width: inherit;*/
+        /*}*/
+
+        .reply-quote {
+            display: block;
+            font-size: 12px;
+            opacity: 0.7;
+            border-left: 3px solid currentColor;
+            padding: 2px 8px;
+            margin-bottom: 4px;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.06);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .them:target {
+            animation: highlight-fade-them 3.5s ease-out forwards;
+        }
+
+        .me:target {
+            animation: highlight-fade-me 3.5s ease-out forwards;
+        }
+
+        @keyframes highlight-fade-them {
+            0%, 60% {
+                background-color: #ffe27a;
+            }
+            100% {
+                background-color: #fff;
+            }
+        }
+
+        @keyframes highlight-fade-me {
+            0%, 60% {
+                background-color: #ffb703;
+            }
+            100% {
+                background-color: #224238;
+            }
+        }
+
+        .media {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .media blockquote.instagram-media {
+            max-width: 100% !important;
+        }
+
+        .media iframe.instagram-media {
+            transform-origin: top left;
+        }
+
+    </style>
+</head>
+<body>
+<div class="chat" id="chat">
+    {% include "bubbles.html" %}
+</div>
+
+<script>
+    const chat = document.getElementById('chat');
+    chat.scrollTop = chat.scrollHeight;
+
+    document.body.addEventListener('htmx:afterSwap', function () {
+        const nearBottom = chat.scrollHeight - chat.scrollTop - chat.clientHeight < 150;
+        if (nearBottom) {
+            chat.scrollTop = chat.scrollHeight;
+        }
+        if (window.instgrm) window.instgrm.Embeds.process();
+
+    });
+
+    setInterval(() => {
+        document.querySelectorAll('.media iframe.instagram-media').forEach(iframe => {
+            const box = iframe.parentElement;
+            const w = parseFloat(iframe.style.width);
+            const h = parseFloat(iframe.style.height);
+            if (!w || !h) return;
+            const scale = Math.min(1, box.clientWidth / w);
+            iframe.style.transform = `scale(${scale})`;
+            box.style.height = (h * scale) + 'px';
+        });
+    }, 500);
+
+</script>
+</body>
+</html>

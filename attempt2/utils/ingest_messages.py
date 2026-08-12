@@ -14,7 +14,7 @@ def ingest_new_messages(cl, thread_id):
     print(len(new_messages))
     extract_messages = []
     for msg in new_messages:
-        extract_messages.append(extract_message(msg, cl, media_download=False, media_summary=False))
+        extract_messages.append(extract_message(msg, cl, media_download=True, media_summary=False, include_reels=False))
 
     with Session(engine) as session:
         with session.begin():

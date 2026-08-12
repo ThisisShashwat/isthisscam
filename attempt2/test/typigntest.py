@@ -6,7 +6,8 @@ THREAD_ID = get_thread_id(cl, test=True)
 
 
 def handle_realtime_sub(payload):
-    print("RAW149:", json.dumps(payload, default=str)[:500])
+    # print("RAW149:", json.dumps(payload, default=str)[:500])
+    print("TYPING")
 
 cl.realtime_on("realtime_sub", handle_realtime_sub)
 
@@ -24,7 +25,9 @@ try:
     rt.ping()
     while True:
         try:
-            cl.realtime_read_once()
+            # cl.realtime_read_once()
+            rt.read_once()
+
         except TimeoutError:
             continue
 except KeyboardInterrupt:
