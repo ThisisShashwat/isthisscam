@@ -1,8 +1,9 @@
 from sqlmodel import Session
 
-from export_to_db import ingest_new_messages
+from utils.ingest_messages import ingest_new_messages
 from utils.db_utils import init_db, engine
 from utils.extraction import extract_message
+from utils.general_utils import get_field
 from utils.insta_utils import get_client, get_thread_id
 
 print("before getclient")
@@ -12,12 +13,16 @@ print("after getclient")
 THREAD_ID = get_thread_id(cl, test=True)
 
 def handle_direct_message(payload):
-    msg = cl.direct_message(payload["message"]["thread_id"], payload["message"]["item_id"], amount=20)
-    extracted_msg = extract_message(msg, cl, media_download=True, media_summary=True)
-    print(extracted_msg)
-    with Session(engine) as session:
-        with session.begin():
-            session.merge(extracted_msg)
+
+    try:
+        msg = cl.direct_message(get_field(payload, "message", "thread_id"), get_field(payload, "message", "item_id"), amount=20)
+        extracted_msg = extract_message(msg, cl, media_download=True, media_summary=True, include_reels=True)
+        print(extracted_msg)
+        with Session(engine) as session:
+            with session.begin():
+                session.merge(extracted_msg)
+    except Exception as e:
+        print(e)
 
 
 

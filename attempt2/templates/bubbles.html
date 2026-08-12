@@ -1,0 +1,63 @@
+{% for msg in messages%}
+
+{% if not msg.item_type == "action_log" %}
+<div class="bubble {{ 'me' if msg.is_sent_by_viewer else 'them' }}" id="msg-{{ msg.id }}">
+
+    {% if msg.replied_to %}
+
+    <a class="reply-quote" href="#msg-{{ msg.replied_to.id }}">
+        {{ msg.replied_to.text or (msg.replied_to.media_type | capitalize if msg.replied_to.media_type else 'Message')
+        }}
+    </a>
+
+    {% endif %}
+
+    {% if msg.text %} {{ msg.text }} {% endif %}
+
+    <div class="media">
+
+        {% if msg.media_type in ('reel', 'post') and msg.media_urls %}
+
+        {% for url in msg.media_urls %}
+        <blockquote class="instagram-media"
+                    data-instgrm-permalink="{{ url }}" data-instgrm-version="14"
+                    style="margin:0;">
+            <div style="padding:16px;">
+                <a class="ig-link-card" href="{{ url }}" target="_blank" rel="noopener">
+                    View {{ msg.media_type }} on Instagram ↗
+                </a>
+            </div>
+        </blockquote>
+
+        {% endfor %}
+
+        {% else %}
+        {% set is_local = msg.media_local_file_paths %}
+
+        {% for path in (msg.media_local_file_paths or msg.media_urls or []) %}
+        {% set src = ('/' ~ path) if is_local else path %}
+        {% if msg.media_type == 'audio' %}
+        <audio src="{{ src }}" controls></audio>
+        {% elif msg.media_type == 'video' %}
+        <video src="{{ src }}" controls></video>
+        {% else %}
+        <img src="{{ src }}" alt="">
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+
+
+    </div>
+    <div class="meta">{{ msg.timestamp.strftime('%d %b %Y, %H:%M') }}</div>
+</div>
+
+{% endif %}
+
+{% endfor %}
+
+{% set new_after = messages[-1].timestamp.isoformat() if messages else after %}
+<div hx-get="/chat/{{ thread_id }}/poll?after={{ new_after or '' }}"
+     hx-trigger="every 2s"
+     hx-swap="outerHTML"
+     hx-target="this">
+</div>

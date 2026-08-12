@@ -1,3 +1,7 @@
 /ig_session.json
+/ig_session_other.json
 /.env
 /attempt2/test/extracted_media_debug.json
+/attempt2/schema/example_schema.json
+/attempt2/schema/raw_schema.json
+/attempt2/schema/trimmed_schema.json

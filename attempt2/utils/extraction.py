@@ -109,7 +109,7 @@ def extract_media(msg):
             fb_url = get_field(anim, "images", "fixed_height", "url") or get_field(anim, "images", "fixed_height", "mp4")
             if fb_url:
                 urls.append(str(fb_url))
-        kind = "sticker" if is_sticker else "animated_gif"
+        kind = "sticker" if is_sticker else "gif"
         if urls:
             media_type=kind
             media_urls = urls
@@ -122,7 +122,7 @@ def extract_media(msg):
             or get_field(msg, "voice_media", "media", "audio", "audio_src")
         )
         if audio_url:
-            media_type="voice_message"
+            media_type="audio"
             media_urls=[str(audio_url)]
 
     # 5. raven
@@ -214,7 +214,7 @@ def extract_media(msg):
 #     return reactions_list
 
 
-def extract_message(msg, cl, media_download=False, media_summary=False) -> Messages:
+def extract_message(msg, cl, media_download=False, media_summary=False, include_reels=False) -> Messages:
     message_id = get_field(msg, "id")
     if not message_id:
         if "mid.$" in get_field(msg, "message_id"):
@@ -246,13 +246,13 @@ def extract_message(msg, cl, media_download=False, media_summary=False) -> Messa
     #     "sticker",
     #     "post",
     #     "reel",
-    #     "animated_gif",
-    #     "voice_message",
+    #     "gif",
+    #     "audio",
     #     "video",
     # ]
 
     if (media_download or media_summary) and media_urls and media_type:
-        media_local_file_paths = download_all_urls(media_urls, media_type, cl, message_id)
+        media_local_file_paths = download_all_urls(media_urls, media_type, cl, message_id, include_reels)
     else:
         media_local_file_paths = None
 

@@ -20,9 +20,13 @@ def download_url(url, message_id, index, media_type):
     return str(dest_path)
 
 
-def resolve_urls(urls, media_type, cl):
+def resolve_urls(urls, media_type, cl, download_reels):
+
+    if not download_reels and media_type == "gif": return []
 
     if media_type in ("post", "reel"):
+
+        if not download_reels: return []
 
         new_urls = []
 
@@ -48,10 +52,10 @@ def resolve_urls(urls, media_type, cl):
     else:
         return urls
 
-def download_all_urls(urls, media_type, cl, message_id):
+def download_all_urls(urls, media_type, cl, message_id, download_reels):
     file_paths = []
 
-    new_urls = resolve_urls(urls, media_type, cl)
+    new_urls = resolve_urls(urls, media_type, cl, download_reels)
 
     for i, url in enumerate(new_urls):
         file_path = download_url(url, message_id, i, media_type)
