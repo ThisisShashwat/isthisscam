@@ -122,7 +122,7 @@
 
         .media {
             max-width: 100%;
-            overflow-x: auto;
+            overflow: hidden;
         }
 
         .media blockquote.instagram-media {
@@ -144,6 +144,23 @@
     const chat = document.getElementById('chat');
     chat.scrollTop = chat.scrollHeight;
 
+    function scaleEmbed(iframe) {
+        const wrap = iframe.closest('.media');
+        if (!wrap || !iframe.offsetWidth) return;
+        const scale = Math.min(1, wrap.clientWidth / iframe.offsetWidth);
+        iframe.style.transform = `scale(${scale})`;
+        wrap.style.height = (iframe.offsetHeight * scale) + 'px';
+    }
+
+    const ro = new ResizeObserver(entries => entries.forEach(e => scaleEmbed(e.target)));
+
+    new MutationObserver(() => {
+        document.querySelectorAll('.media iframe.instagram-media:not([data-scaled])').forEach(iframe => {
+            iframe.dataset.scaled = '1';
+            ro.observe(iframe);
+        });
+    }).observe(chat, {childList: true, subtree: true});
+
     document.body.addEventListener('htmx:afterSwap', function () {
         const nearBottom = chat.scrollHeight - chat.scrollTop - chat.clientHeight < 150;
         if (nearBottom) {
@@ -152,18 +169,6 @@
         if (window.instgrm) window.instgrm.Embeds.process();
 
     });
-
-    setInterval(() => {
-        document.querySelectorAll('.media iframe.instagram-media').forEach(iframe => {
-            const box = iframe.parentElement;
-            const w = parseFloat(iframe.style.width);
-            const h = parseFloat(iframe.style.height);
-            if (!w || !h) return;
-            const scale = Math.min(1, box.clientWidth / w);
-            iframe.style.transform = `scale(${scale})`;
-            box.style.height = (h * scale) + 'px';
-        });
-    }, 500);
 
 </script>
 </body>
