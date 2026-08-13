@@ -19,15 +19,13 @@
         {% if msg.media_type in ('reel', 'post') and msg.media_urls %}
 
         {% for url in msg.media_urls %}
-        <blockquote class="instagram-media"
-                    data-instgrm-permalink="{{ url }}" data-instgrm-version="14"
-                    style="margin:0;">
+        <div class="ig-embed-placeholder" data-permalink="{{ url }}" style="margin:0;">
             <div style="padding:16px;">
                 <a class="ig-link-card" href="{{ url }}" target="_blank" rel="noopener">
                     View {{ msg.media_type }} on Instagram ↗
                 </a>
             </div>
-        </blockquote>
+        </div>
 
         {% endfor %}
 
@@ -37,11 +35,11 @@
         {% for path in (msg.media_local_file_paths or msg.media_urls or []) %}
         {% set src = ('/' ~ path) if is_local else path %}
         {% if msg.media_type == 'audio' %}
-        <audio src="{{ src }}" controls></audio>
+        <audio src="{{ src }}" controls preload="none"></audio>
         {% elif msg.media_type == 'video' %}
-        <video src="{{ src }}" controls></video>
+        <video src="{{ src }}" controls preload="none"></video>
         {% else %}
-        <img src="{{ src }}" alt="">
+        <img src="{{ src }}" alt="" loading="lazy">
         {% endif %}
         {% endfor %}
         {% endif %}

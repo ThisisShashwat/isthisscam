@@ -6,6 +6,7 @@ load_dotenv()
 
 
 RECIPIENT_USERNAME= "ishaanirl.exe"
+# RECIPIENT_USERNAME= "dhrithiiiii_"
 IG_SESSIONID = os.environ["IG_SESSIONID"]
 IG_SESSIONID_OTHER = os.environ["IG_SESSIONID_OTHER"]
 

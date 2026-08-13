@@ -10,7 +10,7 @@ print("before getclient")
 cl = get_client()
 print("after getclient")
 
-THREAD_ID = get_thread_id(cl, test=True)
+THREAD_ID = get_thread_id(cl, test=False)
 
 
 def handle_direct_message(payload):

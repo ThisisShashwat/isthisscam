@@ -5,12 +5,12 @@ from sqlalchemy.orm import selectinload
 from sqlmodel import select, Session
 
 from utils.db_utils import init_db, engine
-from utils.insta_utils import get_thread_id
+from utils.insta_utils import get_thread_id, get_client
 from utils.models import Messages
 
 app = Flask(__name__, static_folder="media", static_url_path="/media")
-
-THREAD_ID = get_thread_id(None, test=True)
+cl = get_client()
+THREAD_ID = get_thread_id(cl, test=False)
 init_db()
 
 

@@ -10,24 +10,32 @@
 
     <style>
 
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+
         body {
             font-family: -apple-system, Segoe UI, Roboto, sans-serif;
             background: #e9edf1;
-            margin: 0;
         }
 
         .chat {
-            /*max-width: 700px;*/
             margin: 0 auto;
             padding: 16px;
-            height: 100vh;
+            height: 100dvh;
             overflow-y: auto;
             box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        #chat-inner {
             display: flex;
             flex-direction: column;
             gap: 6px;
-            scroll-behavior: smooth;
         }
+
 
         .bubble {
             max-width: 65%;
@@ -137,16 +145,31 @@
 </head>
 <body>
 <div class="chat" id="chat">
-    {% include "bubbles.html" %}
+    <div id="chat-inner">
+        {% include "bubbles.html" %}
+    </div>
 </div>
 
 <script>
     const chat = document.getElementById('chat');
-    chat.scrollTop = chat.scrollHeight;
+    const chatInner = document.getElementById('chat-inner');
+    let stickToBottom = true;
+
+    chat.addEventListener('scroll', () => {
+        stickToBottom = chat.scrollHeight - chat.scrollTop - chat.clientHeight <150;
+    });
+
+    const growRO = new ResizeObserver(() => {
+        if (stickToBottom) {
+            chat.scrollTo({top: chat.scrollHeight, behavior: 'instant'})
+        }
+    });
+
+    growRO.observe(chatInner);
 
     function scaleEmbed(iframe) {
         const wrap = iframe.closest('.media');
-        if (!wrap || !iframe.offsetWidth) return;
+        if (!wrap || !iframe.offsetWidth || iframe.offsetHeight < 50) return;
         const scale = Math.min(1, wrap.clientWidth / iframe.offsetWidth);
         iframe.style.transform = `scale(${scale})`;
         wrap.style.height = (iframe.offsetHeight * scale) + 'px';
@@ -161,12 +184,52 @@
         });
     }).observe(chat, {childList: true, subtree: true});
 
+    function loadInstagramEmbed(placeholder) {
+        const blockquote = document.createElement('blockquote');
+        blockquote.className = "instagram-media";
+        blockquote.dataset.instgrmPermalink = placeholder.dataset.permalink;
+        blockquote.dataset.instgrmVersion = "14";
+        blockquote.style.margin = '0';
+        blockquote.innerHTML = placeholder.innerHTML;
+        placeholder.replaceWith(blockquote);
+
+        (function tryProcess() {
+            if (window.instgrm && window.instgrm.Embeds) {
+                window.instgrm.Embeds.process(blockquote);
+
+                setTimeout(() => {
+                    const hasIframe = blockquote.parentElement &&
+                        blockquote.parentElement.querySelector('iframe.instagram-media');
+                    if (!hasIframe) {
+                        blockquote.innerHTML = fallbackHTML;
+                    }
+                }, 5000);
+
+
+            } else {
+                setTimeout(tryProcess, 200);
+            }
+        })();
+    }
+
+    const igObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                igObserver.unobserve(entry.target);
+                loadInstagramEmbed(entry.target);
+            }
+        });
+    }, {root: chat, rootMargin: '400px'});
+
+    document.querySelectorAll('.ig-embed-placeholder').forEach(e1 => igObserver.observe(e1));
+
     document.body.addEventListener('htmx:afterSwap', function () {
         const nearBottom = chat.scrollHeight - chat.scrollTop - chat.clientHeight < 150;
         if (nearBottom) {
             chat.scrollTop = chat.scrollHeight;
         }
-        if (window.instgrm) window.instgrm.Embeds.process();
+
+        document.querySelectorAll('.ig-embed-placeholder').forEach(e1 => igObserver.observe(e1));
 
     });
 
