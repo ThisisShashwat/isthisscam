@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Insta</title>
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
     <script async src="https://www.instagram.com/embed.js"></script>
@@ -24,7 +23,7 @@
         .chat {
             margin: 0 auto;
             padding: 16px;
-            height: 100dvh;
+            height: 100vh;
             overflow-y: auto;
             box-sizing: border-box;
             scroll-behavior: smooth;
@@ -197,13 +196,21 @@
             if (window.instgrm && window.instgrm.Embeds) {
                 window.instgrm.Embeds.process(blockquote);
 
-                setTimeout(() => {
+                const fallbackTimer = setTimeout(() => {
+                    mo.disconnect();
+                    blockquote.innerHTML = fallbackHTML;
+                }, 10000);
+
+                const mo = new MutationObserver(() => {
                     const hasIframe = blockquote.parentElement &&
                         blockquote.parentElement.querySelector('iframe.instagram-media');
-                    if (!hasIframe) {
-                        blockquote.innerHTML = fallbackHTML;
+                    if (hasIframe) {
+                        clearTimeout(fallbackTimer);
+                        mo.disconnect();
                     }
-                }, 5000);
+                });
+
+                mo.observe(blockquote.parentNode, {childList: true});
 
 
             } else {
@@ -224,11 +231,6 @@
     document.querySelectorAll('.ig-embed-placeholder').forEach(e1 => igObserver.observe(e1));
 
     document.body.addEventListener('htmx:afterSwap', function () {
-        const nearBottom = chat.scrollHeight - chat.scrollTop - chat.clientHeight < 150;
-        if (nearBottom) {
-            chat.scrollTop = chat.scrollHeight;
-        }
-
         document.querySelectorAll('.ig-embed-placeholder').forEach(e1 => igObserver.observe(e1));
 
     });
