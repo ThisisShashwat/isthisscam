@@ -4,8 +4,6 @@ from sqlmodel import Session
 from utils.db_utils import engine
 from utils.extraction import extract_message
 from utils.insta_utils import fetch_new_messages
-from utils.models import Messages
-
 
 def ingest_new_messages(cl, thread_id):
     with Session(engine) as session:

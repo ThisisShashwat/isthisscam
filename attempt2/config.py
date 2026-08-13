@@ -11,7 +11,8 @@ IG_SESSIONID = os.environ["IG_SESSIONID"]
 IG_SESSIONID_OTHER = os.environ["IG_SESSIONID_OTHER"]
 
 
-DB_PATH= "insta.db"
+DB_PATH = r"E:\PythonProject\scamming\attempt2\insta.db"
+
 OPENROUTER_API_KEY= os.environ["OPENROUTER_API_KEY"]
 
 
@@ -51,3 +52,11 @@ summary_instruction = (
     "expressions, and any on-screen text. "
     "Do not use markdown or any formatting, use only plain text. "
 )
+
+# session stuff
+
+SESSION_GAP_MINUTES = 60
+HARD_CUTOFF_HOURS = 24
+MIN_SESSION_SIZE = 20
+MAX_SESSION_SIZE = 200
+REPLY_MERGE_RATIO = 0.3

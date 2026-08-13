@@ -26,6 +26,8 @@ class Messages(SQLModel, table=True):
 
     replied_to: Optional["Messages"] = Relationship(sa_relationship_kwargs={"remote_side":"Messages.id"})
 
+    session: Optional[int] = Field(default=None)
+
     @field_validator("thread_id", "id", "reply_id", "user_id", mode="before")
     @classmethod
     def coerce_ids_to_str(cls, v):

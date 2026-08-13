@@ -272,7 +272,7 @@ def extract_message(msg, cl, media_download=False, media_summary=False, include_
         item_type=item_type,
 
         text=text,
-        reply_id=str(reply_id),
+        reply_id=reply_id,
 
         media_type=media_type,
         media_urls=media_urls,
