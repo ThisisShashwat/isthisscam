@@ -1,13 +1,13 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional
 from datetime import datetime
-from sqlalchemy import Column, JSON
+from sqlalchemy import Column, JSON, DateTime
 from pydantic import field_validator
 
 
 class Messages(SQLModel, table=True):
     id: str = Field(primary_key=True)
-    thread_id: str = Field()
+    thread_id: str = Field(index=True)
     user_id: Optional[str] = Field(default=None)
 
     timestamp: datetime = Field(index=True)
@@ -26,9 +26,20 @@ class Messages(SQLModel, table=True):
 
     replied_to: Optional["Messages"] = Relationship(sa_relationship_kwargs={"remote_side":"Messages.id"})
 
-    session: Optional[int] = Field(default=None)
+    session: Optional[int] = Field(default=None, index=True)
 
     @field_validator("thread_id", "id", "reply_id", "user_id", mode="before")
     @classmethod
     def coerce_ids_to_str(cls, v):
         return str(v) if v is not None else v
+
+
+
+class SessionStatus(SQLModel, table=True):
+    thread_id: str = Field(primary_key=True)
+    session: str = Field(primary_key=True)
+    done: bool = Field(default=False, index=True)
+    updated_at: datetime = Field(
+        default_factory= datetime.now,
+        sa_column=Column(DateTime(), onupdate= datetime.now),
+    )

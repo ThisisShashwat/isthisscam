@@ -24,7 +24,8 @@ from sqlmodel import Session, select, update
 
 from config import SESSION_GAP_MINUTES, HARD_CUTOFF_HOURS, MAX_SESSION_SIZE, MIN_SESSION_SIZE
 from utils.db_utils import engine
-from utils.models import Messages
+from utils.models import Messages, SessionStatus
+
 
 def recalculate_session(thread_id):
 
@@ -49,6 +50,9 @@ def recalculate_session(thread_id):
                 session_id, session_ids, last_time = 1, [], None
             else:
                 session_id = last.session
+
+                change_session_status(db, thread_id, session_id, False)
+
                 session_ids = db.exec(
                     select(Messages.id)
                     .where(
@@ -84,6 +88,8 @@ def recalculate_session(thread_id):
                             .values(session=session_id - 1)
                         )
 
+                        change_session_status(db, thread_id, session_id - 1, False)
+
                     else:
                         session_id += 1
 
@@ -103,3 +109,16 @@ def is_same_session(msg, last_time, session_ids):
         return True
 
     return msg.reply_id in session_ids
+
+
+
+def change_session_status(db, thread_id, session, to_status):
+    status = db.get(SessionStatus, (thread_id, session))
+
+    if status:
+        status.done = to_status
+    else:
+        db.add(SessionStatus(thread_id=thread_id, session=session, done=to_status))
+
+
+

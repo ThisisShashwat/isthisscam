@@ -1,6 +1,7 @@
 from sqlmodel import Session
 
 from utils.db_utils import init_db, engine
+from utils.extract_memories import extract_memories
 from utils.extraction import extract_message
 from utils.general_utils import get_field
 from utils.ingest_messages import ingest_new_messages
@@ -41,6 +42,11 @@ print("Stating recalculate_sessions")
 recalculate_session(THREAD_ID)
 print("Done")
 
+print("Stating extract_memories")
+extract_memories(THREAD_ID)
+print("Done")
+
+exit()
 
 cl.realtime_on("message", handle_direct_message)
 
