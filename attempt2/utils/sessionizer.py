@@ -103,10 +103,10 @@ def is_same_session(msg, last_time, session_ids):
     return msg.reply_id in session_ids
 
 
-def change_session_status(db, thread_id, session, to_status):
+def change_session_status(db, thread_id, session, to_status, field="done"):
     status = db.get(SessionStatus, (thread_id, session))
 
     if status:
         status.done = to_status
     else:
-        db.add(SessionStatus(thread_id=thread_id, session=session, done=to_status))
+        db.add(SessionStatus(thread_id=thread_id, session=session, done=to_status, **{field: to_status}))

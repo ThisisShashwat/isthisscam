@@ -7,7 +7,7 @@ import subprocess
 from openai import OpenAI
 
 from config import OPENROUTER_API_KEY, SUMMARY_MODEL, IMAGE_EXTENSIONS, AUDIO_EXTENSIONS, VIDEO_EXTENSIONS, \
-    summary_instruction, OPENROUTER_URL
+    SUMMARY_PROMPT, OPENROUTER_URL
 
 client = OpenAI(api_key=OPENROUTER_API_KEY, base_url=OPENROUTER_URL, )
 
@@ -49,7 +49,7 @@ def _build_media_block(file_path):
 
 
 def summarise_files(file_paths):
-    content = [{"type": "text", "text": summary_instruction}]
+    content = [{"type": "text", "text": SUMMARY_PROMPT}]
 
     for file_path in file_paths:
         try:

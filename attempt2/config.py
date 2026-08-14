@@ -21,6 +21,7 @@ MEDIA_DIR = "media"
 
 SUMMARY_MODEL = "google/gemini-3.7-flash"
 MEMORY_EXTRACTION_MODEL = "google/gemini-3.7-flash"
+PERSONALITY_EXTRACTION_MODEL = "google/gemini-3.7-flash"
 
 IMAGE_EXTENSIONS = ("jpg", "jpeg", "png", "webp", "bmp", "tiff", "tif", "heic", "heif", "avif", "svg", "ico")
 AUDIO_EXTENSIONS = ("mp3", "wav", "m4a", "aac", "ogg", "oga", "flac", "wma", "opus", "aiff", "aif", "amr", "mid",
@@ -28,7 +29,7 @@ AUDIO_EXTENSIONS = ("mp3", "wav", "m4a", "aac", "ogg", "oga", "flac", "wma", "op
 VIDEO_EXTENSIONS = ("mp4", "mov", "webm", "avi", "mkv", "flv", "wmv", "m4v", "mpg", "mpeg", "3gp", "3g2", "ogv", "ts",
                      "vob")
 
-summary_instruction = (
+SUMMARY_PROMPT = (
     "One or more media files have been attached. "
     "If only a single file is attached: write one thorough, highly detailed summary of it "
     "directly - do not refer to it as 'the first file' or any positional label, and do not "
@@ -99,3 +100,34 @@ more directly-stated (non-inferred), more recent one - and lower the resulting c
 to reflect the conflict.
 - When the same fact is corroborated by multiple sessions, raise its confidence.
 - Merge near-duplicate phrasings of the same fact into one."""
+
+
+STYLE_EXTRACTION_PROMPT = """
+You are analyzing a chat transcript to document exactly how "Me" texts — not what was said, but HOW it was said.
+Only look at lines under "Me:". Ignore "Them:" lines except as context.
+
+For each observation, pick one category from:
+- cadence_burst: message frequency, splitting one thought across multiple messages, response speed, message length
+- capitalization_punctuation: caps usage, lowercase-only, punctuation habits (periods, ellipses, no punctuation)
+- code_switching: mixing Hindi and English, transliteration, which language for what kind of content
+- vocabulary_phrasing: recurring words, filler words, slang, catchphrases, sentence openers/closers
+- emoji_usage: which emojis, placement, frequency, or explicit absence
+- sentence_structure_grammar: fragments vs full sentences, grammar quirks, run-ons
+- tone_register: formality, directness, sarcasm, warmth
+- humor_style: deadpan, exaggeration, self-deprecation, etc.
+- context_shifts: how any of the above changes depending on topic or mood in this transcript
+
+Only report a category if there's clear evidence in THIS transcript. Include 1-2 verbatim example lines quoted
+inline in the description as proof. Be specific ("uses 'lol' as a sentence-ender" not "uses casual language").
+"""
+
+STYLE_CONSOLIDATION_PROMPT = """
+You are merging per-session texting-style observations into one thorough reference document describing exactly
+how "Me" texts. For each of the 9 categories, write a detailed paragraph synthesizing the observations (resolve
+duplicates, note what's consistent vs what only showed up once, keep concrete examples). Skip a category only if
+there is truly no evidence across all sessions. Write for someone who needs to type indistinguishably from "Me" —
+thorough and specific, no vague generalities.
+
+Categories: cadence_burst, capitalization_punctuation, code_switching, vocabulary_phrasing, emoji_usage,
+sentence_structure_grammar, tone_register, humor_style, context_shifts
+"""

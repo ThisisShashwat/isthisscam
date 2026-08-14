@@ -69,14 +69,15 @@ def build_facts_input(thread_id):
         return "\n".join(lines)
 
 
-def get_pending_sessions(thread_id):
+def get_pending_sessions(thread_id, field="done"):
     with Session(engine) as db:
-        done = set(db.exec(select(SessionStatus.session).where(SessionStatus.done == True,
-                                                                                        SessionStatus.thread_id == thread_id)).all())
+        done_col = getattr(SessionStatus, field)
+        done = set(db.exec(select(SessionStatus.session).where(done_col == True,
+                                                                 SessionStatus.thread_id == thread_id)).all())
 
         all_sessions = set(db.exec(
             select(Messages.session).where(Messages.session != None,
-                                                                         Messages.thread_id == thread_id).distinct()).all())
+                                            Messages.thread_id == thread_id).distinct()).all())
 
         return all_sessions - done
 

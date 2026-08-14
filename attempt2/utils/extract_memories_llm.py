@@ -49,7 +49,7 @@ def extract_session_memories(thread_id, session, transcript):
 
     with Session(engine) as db:
         with db.begin():
-            db.exec(delete(Memories).where(Memories.thread_id == thread_id, Memories.session == session))
+            db.exec(delete(Memories).where(Memories.thread_id == thread_id, Memories.session == session, Memories.type != "trait"))
 
             for item in extraction.items:
                 db.add(Memories(thread_id=thread_id, session=session, **item.model_dump()))

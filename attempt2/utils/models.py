@@ -39,6 +39,7 @@ class SessionStatus(SQLModel, table=True):
     thread_id: str = Field(primary_key=True)
     session: int = Field(primary_key=True)
     done: bool = Field(default=False, index=True)
+    traits_done: bool = Field(default=False, index=True)
     updated_at: datetime = Field(default_factory=datetime.now, sa_column=Column(DateTime(), onupdate=datetime.now), )
 
 
@@ -62,4 +63,10 @@ class Facts(SQLModel, table=True):
     content: str
     confidence: str
     last_session: int
+    updated_at: datetime = Field(default_factory=datetime.now, sa_column=Column(DateTime(), onupdate=datetime.now), )
+
+
+class PersonalityProfile(SQLModel, table=True):
+    thread_id: str = Field(primary_key=True)
+    content: str
     updated_at: datetime = Field(default_factory=datetime.now, sa_column=Column(DateTime(), onupdate=datetime.now), )
