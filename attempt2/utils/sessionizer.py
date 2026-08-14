@@ -28,39 +28,29 @@ from utils.models import Messages, SessionStatus
 
 
 def recalculate_session(thread_id):
-
     with Session(engine) as db:
         with db.begin():
-            last = db.exec(
-                select(Messages)
-                .where(Messages.thread_id == thread_id, Messages.session != None)
-                .order_by(Messages.timestamp.desc())
-            ).first()
+            last = db.exec(select(Messages).where(Messages.thread_id == thread_id, Messages.session != None).order_by(
+                Messages.timestamp.desc())).first()
 
-            batch = db.exec(
-                select(Messages)
-                .where(Messages.thread_id == thread_id, Messages.session == None)
-                .order_by(Messages.timestamp)
-            ).all()
+            batch = db.exec(select(Messages).where(Messages.thread_id == thread_id, Messages.session == None).order_by(
+                Messages.timestamp)).all()
 
             if not batch:
                 return
 
             if last is None:
                 session_id, session_ids, last_time = 1, [], None
+                original_session_id, session_id_flipped = None, True
             else:
                 session_id = last.session
+                original_session_id, session_id_flipped = session_id, False
 
                 change_session_status(db, thread_id, session_id, False)
 
                 session_ids = db.exec(
-                    select(Messages.id)
-                    .where(
-                        Messages.thread_id == thread_id,
-                        Messages.session == session_id,
-                        Messages.item_type == "text",
-                    )
-                ).all()
+                    select(Messages.id).where(Messages.thread_id == thread_id, Messages.session == session_id,
+                                              Messages.item_type == "text", )).all()
 
                 last_time = last.timestamp
 
@@ -82,11 +72,8 @@ def recalculate_session(thread_id):
                         for m in open_msgs:
                             m.session = session_id - 1
 
-                        db.exec(
-                            update(Messages)
-                            .where(Messages.thread_id == thread_id, Messages.session == session_id)
-                            .values(session=session_id - 1)
-                        )
+                        db.exec(update(Messages).where(Messages.thread_id == thread_id,
+                                                       Messages.session == session_id).values(session=session_id - 1))
 
                         change_session_status(db, thread_id, session_id - 1, False)
 
@@ -95,10 +82,15 @@ def recalculate_session(thread_id):
 
                     session_ids, open_msgs = [], []
 
+                if session_id == original_session_id and not session_id_flipped:
+                    change_session_status(db, thread_id, session_id, False)
+                    session_id_flipped = True
+
                 msg.session = session_id
                 session_ids.append(msg.id)
                 open_msgs.append(msg)
                 last_time = msg.timestamp
+
 
 def is_same_session(msg, last_time, session_ids):
     gap = msg.timestamp - last_time
@@ -111,7 +103,6 @@ def is_same_session(msg, last_time, session_ids):
     return msg.reply_id in session_ids
 
 
-
 def change_session_status(db, thread_id, session, to_status):
     status = db.get(SessionStatus, (thread_id, session))
 
@@ -119,8 +110,3 @@ def change_session_status(db, thread_id, session, to_status):
         status.done = to_status
     else:
         db.add(SessionStatus(thread_id=thread_id, session=session, done=to_status))
-
-    #TODO i need to check that what happens if say only reel was the reasons it became pending again? i only want text to cause pending..
-
-
-

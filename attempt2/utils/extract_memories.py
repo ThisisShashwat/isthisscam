@@ -1,8 +1,9 @@
 from sqlmodel import Session, select
 
+from config import DEBUG
 from utils.db_utils import engine
-from utils.extract_memories_llm import extract_session_memories, save_session_memories
-from utils.models import Messages, SessionStatus
+from utils.extract_memories_llm import extract_session_memories, consolidate_facts
+from utils.models import Messages, SessionStatus, Memories
 
 
 def build_session_transcript(thread_id, session):
@@ -50,6 +51,24 @@ def build_session_transcript(thread_id, session):
         return "".join(lines).strip()
 
 
+def build_facts_input(thread_id):
+    with Session(engine) as db:
+        memories = db.exec(
+            select(Memories)
+            .where(Memories.thread_id == thread_id, Memories.type == "memory")
+            .order_by(Memories.session)
+        ).all()
+
+        lines = []
+
+        for m in memories:
+            who = "Me" if m.about_viewer is True else "Them" if m.about_viewer is False else "Both"
+            lines.append(f"[session {m.session}, about {who}, {m.confidence} confidence"
+                         f"{', inferred' if m.inferred else ''}] {m.content}")
+
+        return "\n".join(lines)
+
+
 def get_pending_sessions(thread_id):
     with Session(engine) as db:
         done = set(db.exec(select(SessionStatus.session).where(SessionStatus.done == True,
@@ -63,12 +82,18 @@ def get_pending_sessions(thread_id):
 
 
 def extract_memories(thread_id):
-    for session in get_pending_sessions(thread_id):
-        print(session)
-        transcript = build_session_transcript(thread_id, session)
-        extraction = extract_session_memories(transcript)
-        save_session_memories(thread_id, session, extraction)
-        if session == 31:
-            print(transcript)
-            print(extraction)
 
+    sessions_changed = False
+
+    for session in get_pending_sessions(thread_id):
+        transcript = build_session_transcript(thread_id, session)
+        extract_session_memories(thread_id, session, transcript)
+
+        sessions_changed = True
+
+        if DEBUG and session == 31:
+            print(transcript)
+
+    if sessions_changed:
+        facts_input = build_facts_input(thread_id)
+        consolidate_facts(thread_id, facts_input)

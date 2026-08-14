@@ -41,6 +41,7 @@ class SessionStatus(SQLModel, table=True):
     done: bool = Field(default=False, index=True)
     updated_at: datetime = Field(default_factory=datetime.now, sa_column=Column(DateTime(), onupdate=datetime.now), )
 
+
 class Memories(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     thread_id: str = Field(index=True)
@@ -52,3 +53,13 @@ class Memories(SQLModel, table=True):
     inferred: bool = Field(default=False, index=True)
     tags: Optional[list] = Field(default=None, sa_column=Column(JSON))
     created_at: datetime = Field(default_factory=datetime.now, sa_column=Column(DateTime(), onupdate=datetime.now))
+
+
+class Facts(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    thread_id: str = Field(index=True)
+    about_viewer: Optional[bool] = Field(default=None, index=True)
+    content: str
+    confidence: str
+    last_session: int
+    updated_at: datetime = Field(default_factory=datetime.now, sa_column=Column(DateTime(), onupdate=datetime.now), )

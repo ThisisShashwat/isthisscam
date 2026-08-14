@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+DEBUG = True
 
 RECIPIENT_USERNAME= "ishaanirl.exe"
 # RECIPIENT_USERNAME= "dhrithiiiii_"
@@ -82,3 +83,19 @@ false if it was said outright.
 - tags: optional short freeform category labels, e.g. ["conflict"], ["food"].
 
 Skip small talk with no lasting signal. Always include exactly one "summary" item."""
+
+CONSOLIDATION_PROMPT = """You are reconciling everything learned about the people in an \
+Instagram DM thread across many separate conversations, into one current, contradiction-free \
+list of facts.
+
+Each input line is one previously-extracted memory, tagged with the session it came from, \
+who it's about (viewer/them/both), and how confident and how directly-stated it was.
+
+Produce the current best list of facts:
+- When a fact changes over time (e.g. an age going up), keep only the latest version and \
+set last_session to the session it came from.
+- When two memories genuinely conflict rather than evolve, prefer the higher-confidence, \
+more directly-stated (non-inferred), more recent one - and lower the resulting confidence \
+to reflect the conflict.
+- When the same fact is corroborated by multiple sessions, raise its confidence.
+- Merge near-duplicate phrasings of the same fact into one."""
