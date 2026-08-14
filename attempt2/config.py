@@ -20,7 +20,7 @@ OPENROUTER_URL = "https://ai.hackclub.com/proxy/v1"
 MEDIA_DIR = "media"
 
 SUMMARY_MODEL = "google/gemini-3.7-flash"
-MEMORY_EXTRACTION_MODEL = "openai/gpt-5.6-terra"
+MEMORY_EXTRACTION_MODEL = "google/gemini-3.7-flash"
 
 IMAGE_EXTENSIONS = ("jpg", "jpeg", "png", "webp", "bmp", "tiff", "tif", "heic", "heif", "avif", "svg", "ico")
 AUDIO_EXTENSIONS = ("mp3", "wav", "m4a", "aac", "ogg", "oga", "flac", "wma", "opus", "aiff", "aif", "amr", "mid",
