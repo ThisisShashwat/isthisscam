@@ -2,8 +2,8 @@ from sqlmodel import Session
 from sqlmodel import select
 
 from utils.db_utils import engine
-from utils.extract_memories import get_pending_sessions, build_session_transcript
-from utils.extract_personality_llm import extract_session_traits, consolidate_traits
+from sessions.extract_memories import get_pending_sessions, build_session_transcript
+from sessions.extract_personality_llm import extract_session_traits, consolidate_traits
 from utils.models import Memories
 
 

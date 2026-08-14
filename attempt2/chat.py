@@ -1,13 +1,13 @@
 from sqlmodel import Session
 
 from utils.db_utils import init_db, engine
-from utils.extract_memories import extract_memories
-from utils.extract_personality import extract_personality
+from sessions.extract_memories import extract_memories
+from sessions.extract_personality import extract_personality
 from utils.extraction import extract_message
 from utils.general_utils import get_field
 from utils.ingest_messages import ingest_new_messages
 from utils.insta_utils import get_client, get_thread_id
-from utils.sessionizer import recalculate_session
+from sessions.sessionizer import recalculate_session
 
 print("before getclient")
 cl = get_client()

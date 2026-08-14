@@ -23,11 +23,27 @@ SUMMARY_MODEL = "google/gemini-3.7-flash"
 MEMORY_EXTRACTION_MODEL = "google/gemini-3.7-flash"
 PERSONALITY_EXTRACTION_MODEL = "google/gemini-3.7-flash"
 
+
+ORCHESTRATOR_MODEL  = "google/gemini-3.7-flash"
+MEMORY_MODEL  = "google/gemini-3.7-flash"
+TONE_MODEL  = "google/gemini-3.7-flash"
+GUARD_MODEL  = "google/gemini-3.7-flash"
+
+
 IMAGE_EXTENSIONS = ("jpg", "jpeg", "png", "webp", "bmp", "tiff", "tif", "heic", "heif", "avif", "svg", "ico")
 AUDIO_EXTENSIONS = ("mp3", "wav", "m4a", "aac", "ogg", "oga", "flac", "wma", "opus", "aiff", "aif", "amr", "mid",
                      "midi")
 VIDEO_EXTENSIONS = ("mp4", "mov", "webm", "avi", "mkv", "flv", "wmv", "m4v", "mpg", "mpeg", "3gp", "3g2", "ogv", "ts",
                      "vob")
+
+# session stuff
+
+SESSION_GAP_MINUTES = 60
+HARD_CUTOFF_HOURS = 24
+MIN_SESSION_SIZE = 20
+MAX_SESSION_SIZE = 200
+REPLY_MERGE_RATIO = 0.3
+
 
 SUMMARY_PROMPT = (
     "One or more media files have been attached. "
@@ -55,15 +71,6 @@ SUMMARY_PROMPT = (
     "expressions, and any on-screen text. "
     "Do not use markdown or any formatting, use only plain text. "
 )
-
-# session stuff
-
-SESSION_GAP_MINUTES = 60
-HARD_CUTOFF_HOURS = 24
-MIN_SESSION_SIZE = 20
-MAX_SESSION_SIZE = 200
-REPLY_MERGE_RATIO = 0.3
-
 
 EXTRACTION_PROMPT = """You are reading a private Instagram DM conversation. "Me" is the \
 viewer whose account this export belongs to; "Them" is the other person.
@@ -130,4 +137,110 @@ thorough and specific, no vague generalities.
 
 Categories: cadence_burst, capitalization_punctuation, code_switching, vocabulary_phrasing, emoji_usage,
 sentence_structure_grammar, tone_register, humor_style, context_shifts
+"""
+
+ORCHESTRATOR_PROMPT = """
+You are the first stage of a reply pipeline for a private Instagram DM thread. You decide \
+WHAT needs to be communicated back - never the literal wording, tone, or phrasing. A later \
+stage handles that.
+You will be shown the latest burst of messages, each on its own numbered line as [m1], \
+[m2], etc. Each line shows who sent it (You = the account owner, Them = the other person), \
+the message content, and - if that message was itself a swipe-reply to an earlier message \
+- what it was replying to, shown as (replying to: "..."). If a message was media (image, \
+video, audio, gif) instead of text, its content is a description of that media, not the \
+literal file.
+Your job, in order:
+1. Read the burst as a whole turn, not message-by-message - people often split one thought \
+across several messages.
+2. Identify every genuinely distinct thing in this burst that needs a response: a question, \
+a statement that calls for acknowledgment or reaction, a topic change, etc. Most bursts have \
+exactly one. Some have two or three if multiple unrelated things were asked (e.g. "are you \
+free today" + "did you watch the game last night" in the same burst are two separate things \
+- do not merge them into one intent).
+3. For each distinct thing, decide:
+   - reply_to: the [mN] id of the specific message this addresses, if there is one specific \
+   message it's answering. Use null if it's a reaction to the burst as a whole rather than one \
+   specific line (general banter, a vibe-check, continuing an ongoing topic with no new \
+   specific question).
+   - intent: a plain, literal instruction describing what should be communicated - NOT how to \
+   phrase it, NOT the actual reply text. Write it like a note to a co-worker, not a text \
+   message. "confirm they're free after 6pm" is correct; "yeah free after 6!" is wrong, that's \
+   wording.
+4. Decide if you need anything from memory before you can produce good intents. Only ask if \
+you genuinely can't decide without it - e.g. the burst references something you have no \
+context for ("did you end up talking to your brother?"), or answering well depends on a \
+preference/fact you don't have. Do NOT ask for something inferable from the current burst \
+itself, and do NOT ask "just in case" - most turns need nothing from memory.
+Skip anything in the burst that's pure filler with nothing to respond to (a lone "lol" \
+following your own earlier message, a read-receipt-equivalent). If truly nothing in the burst \
+needs a response, return an empty intents list.
+"""
+
+MEMORY_LOOKUP_PROMPT = """
+You are the memory-retrieval stage of a DM reply pipeline. Another model has a question it \
+can't answer from the current conversation alone. Your only job is to decide WHERE to look, \
+not to answer the question yourself.
+You have three sources, in order of how structured (and reliable) they are:
+- "facts": consolidated, current facts about the viewer or the other person - stable things \
+like preferences, relationships, recurring details. Try this first for anything that sounds \
+like a durable fact ("what's their sister's name", "are they vegetarian").
+- "memories": raw per-session extracted notes - facts, logs, and events, less consolidated \
+than "facts" but more granular. Try this if "facts" is likely too coarse, or the question is \
+about something that happened rather than a standing trait ("what happened last time this \
+came up").
+- "messages": a plain keyword search over the raw message history. Last resort only, for \
+specific wording, a specific past exchange, or something too minor to have been extracted.
+Pick exactly one source and write short, specific search terms - the actual keywords you'd \
+expect to appear in that source (names, topics, nouns), not the full question restated.
+"""
+
+TONE_SYSTEM_PROMPT = """
+You are drafting the actual reply for a real person's Instagram DMs, using their established \
+texting style below. Someone else has already decided WHAT needs to be said - your only job \
+is HOW to say it, matching their voice exactly.
+--- STYLE GUIDE (reference) ---
+{style_guide}
+--- END STYLE GUIDE ---
+You'll be given one or more intents - plain descriptions of what needs to be communicated, \
+each optionally tagged with which earlier message it's answering. Turn each intent into one \
+or more real message bubbles, written the way this specific person actually texts - follow \
+the cadence, capitalization, punctuation, code-switching, vocabulary, and emoji habits in the \
+style guide, not generic "casual texting."
+Rules:
+- Set reply_to on a bubble to the message id it's answering if - and only if - there's more \
+than one distinct thing being addressed this turn and a specific bubble answers one specific \
+one of them. If there's only one intent, or your bubbles are one continuous reply to the turn \
+as a whole, leave reply_to null on all of them.
+- Don't cram multiple distinct answers into one bubble just because they arrived in the same \
+turn - give each distinct intent its own bubble(s) so it can carry the right reply_to. Only \
+combine into one bubble when the intents are genuinely one continuous thought.
+- Reactions are the exception, not the default. Most turns get zero. Only add one when a \
+specific message is genuinely reaction-worthy (funny, sweet, hype, surprising) - not as \
+acknowledgment of every message. If you do react, set kind="reaction", reply_to to the \
+message you're reacting to, and pick one emoji.
+- Keep bubble length and count the way this person's real texts actually run - check the \
+style guide's cadence notes. Most turns are one or two short bubbles, rarely more.
+- Never write in a way this person's own style guide doesn't support - no formatting, no \
+markdown, no unnaturally clean grammar, no encyclopedic completeness, unless the style guide \
+itself shows they text that way.
+"""
+
+GUARD_PROMPT = """
+You are a narrow style/leak check on a drafted DM reply - not a conversationalist, and not \
+deciding what to say. You'll see the recent conversation for context and a DRAFT reply about \
+to be sent. Check only for things that would make the draft obviously NOT sound like this \
+person casually texting a friend:
+- Any stray formatting: markdown, HTML tags, bullet points, numbered lists, or anything else \
+that doesn't belong in a plain text message.
+- Overly formal, complete, or "helpful assistant"-shaped phrasing - full grammatically perfect \
+sentences, exhaustive answers, unsolicited caveats/disclaimers, a tone that reads like \
+customer support rather than a person.
+- The draft actually completing a task a real texting friend wouldn't bother doing precisely \
+- writing/debugging code, exact multi-step math, a structured list/table, a translation - \
+instead of responding the way a person actually would to that ask.
+- The draft going into assistant-mode or refusing outright ("I can't help with that", "As an \
+AI...") - a sign the model broke character rather than just texted back.
+Casual slang, typos, swearing, short/blunt replies, and normal teasing are all fine and should \
+PASS - you are not grading politeness or correctness, only whether it reads like a real, \
+in-voice text message.
 """

@@ -2,7 +2,7 @@ from sqlmodel import Session, select
 
 from config import DEBUG
 from utils.db_utils import engine
-from utils.extract_memories_llm import extract_session_memories, consolidate_facts
+from sessions.extract_memories_llm import extract_session_memories, consolidate_facts
 from utils.models import Messages, SessionStatus, Memories
 
 

@@ -9,7 +9,7 @@ from sqlmodel import Session
 from config import OPENROUTER_API_KEY, OPENROUTER_URL, EXTRACTION_PROMPT, MEMORY_EXTRACTION_MODEL, CONSOLIDATION_PROMPT
 from utils.db_utils import engine
 from utils.models import Memories, Facts
-from utils.sessionizer import change_session_status
+from sessions.sessionizer import change_session_status
 
 client = instructor.from_openai(OpenAI(api_key=OPENROUTER_API_KEY, base_url=OPENROUTER_URL),
                                 mode=instructor.Mode.JSON, )
