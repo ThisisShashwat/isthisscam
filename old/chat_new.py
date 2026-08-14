@@ -4,7 +4,7 @@ from instagrapi import Client
 from dotenv import load_dotenv
 load_dotenv()
 
-SESSION_FILE = "ig_session.json"
+SESSION_FILE = "../ig_session.json"
 cl = Client()
 
 if Path(SESSION_FILE).exists():
