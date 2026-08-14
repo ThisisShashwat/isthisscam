@@ -27,10 +27,10 @@ def get_client(session_file="default"):
     return cl
 
 def get_thread_id(cl, test=False):
-    if test: return 340282366841710301281153262129164814061
+    if test: return str(340282366841710301281153262129164814061)
     target_id = cl.user_id_from_username(RECIPIENT_USERNAME)
     thread = cl.direct_thread_by_participants([int(target_id)])
-    return thread["thread"]["thread_id"]
+    return str(thread["thread"]["thread_id"])
 
 
 def fetch_new_messages(thread_id, cl, session, page_limit=20):

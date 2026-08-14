@@ -23,11 +23,14 @@ pending_messages = {}
 pending_timers = {}
 
 def flush(thread_id):
+
     messages = pending_messages.pop(thread_id, [])
     pending_timers.pop(thread_id, None)
 
     if not messages:
         return
+
+    print("flushed")
 
     draft = run_turn(thread_id, messages, personality)
     print(draft.model_dump() if draft else None)
@@ -38,14 +41,13 @@ def handle_direct_message(payload):
         msg = cl.direct_message(get_field(payload, "message", "thread_id"), get_field(payload, "message", "item_id"),
                                 amount=20)
         extracted_msg = extract_message(msg, cl, media_download=True, media_summary=True, include_reels=True)
-        print(extracted_msg)
 
         if extracted_msg.item_type == "action_log": return
         with Session(engine) as session:
             with session.begin():
                 session.merge(extracted_msg)
 
-        thread_id = extracted_msg.thread_id
+        thread_id = str(extracted_msg.thread_id)
         if DEBUG: thread_id = get_thread_id(cl, test=True)
 
         if extracted_msg.is_sent_by_viewer:
