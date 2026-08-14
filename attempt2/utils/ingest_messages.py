@@ -10,11 +10,11 @@ def ingest_new_messages(cl, thread_id):
         new_messages = fetch_new_messages(thread_id, cl, session)
 
     print(len(new_messages))
-    extract_messages = []
+    extracted_messages = []
     for msg in new_messages:
-        extract_messages.append(extract_message(msg, cl, media_download=True, media_summary=False, include_reels=False))
-
+        extracted_msg = extract_message(msg, cl, media_download=True, media_summary=False, include_reels=False)
+        if extracted_msg.item_type != "action_log": extracted_messages.append(extracted_msg)
     with Session(engine) as session:
         with session.begin():
-            session.add_all(extract_messages)
+            session.add_all(extracted_messages)
 

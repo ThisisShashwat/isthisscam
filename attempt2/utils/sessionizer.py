@@ -51,7 +51,11 @@ def recalculate_session(thread_id):
                 session_id = last.session
                 session_ids = db.exec(
                     select(Messages.id)
-                    .where(Messages.thread_id == thread_id, Messages.session == session_id)
+                    .where(
+                        Messages.thread_id == thread_id,
+                        Messages.session == session_id,
+                        Messages.item_type == "text",
+                    )
                 ).all()
 
                 last_time = last.timestamp
@@ -59,6 +63,11 @@ def recalculate_session(thread_id):
             open_msgs: list[Messages] = []
 
             for msg in batch:
+
+                if msg.item_type != "text":
+                    msg.session = session_id
+                    continue
+
                 same = last_time is None or is_same_session(msg, last_time, session_ids)
 
                 if same and len(session_ids) >= MAX_SESSION_SIZE:
@@ -69,7 +78,7 @@ def recalculate_session(thread_id):
                         for m in open_msgs:
                             m.session = session_id - 1
 
-                        db.execute(
+                        db.exec(
                             update(Messages)
                             .where(Messages.thread_id == thread_id, Messages.session == session_id)
                             .values(session=session_id - 1)

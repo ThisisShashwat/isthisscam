@@ -20,6 +20,8 @@ def handle_direct_message(payload):
                                 amount=20)
         extracted_msg = extract_message(msg, cl, media_download=True, media_summary=True, include_reels=True)
         print(extracted_msg)
+
+        if extracted_msg.item_type == "action_log": return
         with Session(engine) as session:
             with session.begin():
                 session.merge(extracted_msg)

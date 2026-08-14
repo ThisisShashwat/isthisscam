@@ -15,6 +15,9 @@ with Session(engine) as session:
 
     current = None
 
+    text_count = 0
+    non_text_count = 0
+
     session_messages = []
 
     for msg in messages:
@@ -25,17 +28,23 @@ with Session(engine) as session:
                 start = session_messages[0].timestamp
                 end = session_messages[-1].timestamp
 
-                print(f"Session {current[1]} | {start} - {end} ({end - start}) | Total: {len(session_messages)}")
+                print(f"Session {current[1]} | {start} - {end} ({end - start}) | "
+                      f"Total: {len(session_messages)} (text:{text_count}, non-text: {non_text_count})")
 
             current = key
             session_messages = []
+            text_count = 0
+            non_text_count = 0
 
         session_messages.append(msg)
+        if msg.item_type == "text": text_count += 1
+        else: non_text_count += 1
 
     if session_messages:
         start = session_messages[0].timestamp
         end = session_messages[-1].timestamp
 
-        print(f"Session {current[1]} | {start} - {end} ({end - start}) | Total: {len(session_messages)}")
+        print(f"Session {current[1]} | {start} - {end} ({end - start}) | "
+              f"Total: {len(session_messages)} (text:{text_count}, non-text: {non_text_count})")
 
 
