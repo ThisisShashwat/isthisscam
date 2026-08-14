@@ -7,9 +7,9 @@ import subprocess
 from openai import OpenAI
 
 from config import OPENROUTER_API_KEY, SUMMARY_MODEL, IMAGE_EXTENSIONS, AUDIO_EXTENSIONS, VIDEO_EXTENSIONS, \
-    summary_instruction
+    summary_instruction, OPENROUTER_URL
 
-client = OpenAI(api_key=OPENROUTER_API_KEY, base_url="https://ai.hackclub.com/proxy/v1", )
+client = OpenAI(api_key=OPENROUTER_API_KEY, base_url=OPENROUTER_URL, )
 
 
 def has_video_stream(file_path):

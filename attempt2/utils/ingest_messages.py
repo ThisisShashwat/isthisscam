@@ -1,4 +1,3 @@
-from sqlalchemy import insert
 from sqlmodel import Session
 
 from utils.db_utils import engine

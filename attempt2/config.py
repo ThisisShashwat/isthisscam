@@ -14,11 +14,12 @@ IG_SESSIONID_OTHER = os.environ["IG_SESSIONID_OTHER"]
 DB_PATH = r"E:\PythonProject\scamming\attempt2\insta.db"
 
 OPENROUTER_API_KEY= os.environ["OPENROUTER_API_KEY"]
-
+OPENROUTER_URL = "https://ai.hackclub.com/proxy/v1"
 
 MEDIA_DIR = "media"
 
 SUMMARY_MODEL = "google/gemini-3.5-flash-lite"
+MEMORY_EXTRACTION_MODEL = "google/gemini-3.5-flash-lite"
 
 IMAGE_EXTENSIONS = ("jpg", "jpeg", "png", "webp", "bmp", "tiff", "tif", "heic", "heif", "avif", "svg", "ico")
 AUDIO_EXTENSIONS = ("mp3", "wav", "m4a", "aac", "ogg", "oga", "flac", "wma", "opus", "aiff", "aif", "amr", "mid",
@@ -60,3 +61,24 @@ HARD_CUTOFF_HOURS = 24
 MIN_SESSION_SIZE = 20
 MAX_SESSION_SIZE = 200
 REPLY_MERGE_RATIO = 0.3
+
+
+EXTRACTION_PROMPT = """You are reading a private Instagram DM conversation. "Me" is the \
+viewer whose account this export belongs to; "Them" is the other person.
+
+Extract a list of items from this conversation chunk. Each item has:
+- about_viewer: true if about "Me", false if about "Them", null if about both or not \
+person-specific (e.g. the summary).
+- type: "summary" (exactly one per chunk, an overview of what it covered), "log" \
+(something notable that happened but isn't a lasting fact), "memory" (a durable fact \
+about a person - preferences, age, relationships, traits), or "event" (a significant \
+emotional moment - conflict, celebration, turning point).
+- content: the fact/summary/description, written plainly.
+- confidence: "high" if directly and unambiguously stated, "medium" if reasonably \
+inferred, "low" if uncertain, sarcastic, or ambiguous.
+- inferred: true if this wasn't stated directly but is a reasonable deduction from \
+context (e.g. "I have to pick up my brother from school" implies they have a brother), \
+false if it was said outright.
+- tags: optional short freeform category labels, e.g. ["conflict"], ["food"].
+
+Skip small talk with no lasting signal. Always include exactly one "summary" item."""

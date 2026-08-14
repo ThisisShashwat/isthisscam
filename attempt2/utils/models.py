@@ -1,8 +1,9 @@
-from sqlmodel import SQLModel, Field, Relationship
-from typing import Optional
 from datetime import datetime
-from sqlalchemy import Column, JSON, DateTime
+from typing import Optional
+
 from pydantic import field_validator
+from sqlalchemy import Column, JSON, DateTime
+from sqlmodel import SQLModel, Field, Relationship
 
 
 class Messages(SQLModel, table=True):
@@ -24,7 +25,7 @@ class Messages(SQLModel, table=True):
     media_local_file_paths: Optional[list] = Field(default=None, sa_column=Column(JSON))
     media_ai_summary: Optional[str] = Field(default=None)
 
-    replied_to: Optional["Messages"] = Relationship(sa_relationship_kwargs={"remote_side":"Messages.id"})
+    replied_to: Optional["Messages"] = Relationship(sa_relationship_kwargs={"remote_side": "Messages.id"})
 
     session: Optional[int] = Field(default=None, index=True)
 
@@ -34,12 +35,20 @@ class Messages(SQLModel, table=True):
         return str(v) if v is not None else v
 
 
-
 class SessionStatus(SQLModel, table=True):
     thread_id: str = Field(primary_key=True)
-    session: str = Field(primary_key=True)
+    session: int = Field(primary_key=True)
     done: bool = Field(default=False, index=True)
-    updated_at: datetime = Field(
-        default_factory= datetime.now,
-        sa_column=Column(DateTime(), onupdate= datetime.now),
-    )
+    updated_at: datetime = Field(default_factory=datetime.now, sa_column=Column(DateTime(), onupdate=datetime.now), )
+
+class Memories(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    thread_id: str = Field(index=True)
+    session: int = Field(index=True)
+    about_viewer: Optional[bool] = Field(default=None, index=True)
+    type: str = Field(index=True)
+    content: str
+    confidence: str
+    inferred: bool = Field(default=False, index=True)
+    tags: Optional[list] = Field(default=None, sa_column=Column(JSON))
+    created_at: datetime = Field(default_factory=datetime.now, sa_column=Column(DateTime(), onupdate=datetime.now))

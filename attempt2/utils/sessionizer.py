@@ -120,5 +120,7 @@ def change_session_status(db, thread_id, session, to_status):
     else:
         db.add(SessionStatus(thread_id=thread_id, session=session, done=to_status))
 
+    #TODO i need to check that what happens if say only reel was the reasons it became pending again? i only want text to cause pending..
+
 
 

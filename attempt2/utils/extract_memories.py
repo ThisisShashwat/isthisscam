@@ -1,6 +1,7 @@
 from sqlmodel import Session, select
 
 from utils.db_utils import engine
+from utils.extract_memories_llm import extract_session_memories, save_session_memories
 from utils.models import Messages, SessionStatus
 
 
@@ -65,5 +66,9 @@ def extract_memories(thread_id):
     for session in get_pending_sessions(thread_id):
         print(session)
         transcript = build_session_transcript(thread_id, session)
-        if session == 31: print(transcript)
+        extraction = extract_session_memories(transcript)
+        save_session_memories(thread_id, session, extraction)
+        if session == 31:
+            print(transcript)
+            print(extraction)
 
