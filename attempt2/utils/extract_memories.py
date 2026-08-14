@@ -48,7 +48,7 @@ def build_session_transcript(thread_id, session):
             else:
                 lines.append(f"  [sent a {msg.media_type or 'media file'}]")
 
-        return "".join(lines).strip()
+        return "\n".join(lines).strip()
 
 
 def build_facts_input(thread_id):
