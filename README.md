@@ -1,3 +1,6 @@
+<img width="1080" height="1673" alt="image" src="https://github.com/user-attachments/assets/c0493414-0719-4bb9-be7f-4e464eee5b02" />
+
+(real screenshot of a real guy getting catfished with this code (fully ai), 100% unattended)
 Have you ever tried catfishing your friend but given up after some time because it was too much commitment to keep texting him?
 
 This is the perfect solution. 
