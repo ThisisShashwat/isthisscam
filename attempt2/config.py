@@ -6,6 +6,10 @@ load_dotenv()
 
 DEBUG = True
 
+
+DEBOUNCE_SECONDS = 7
+
+
 RECIPIENT_USERNAME= "ishaanirl.exe"
 # RECIPIENT_USERNAME= "dhrithiiiii_"
 IG_SESSIONID = os.environ["IG_SESSIONID"]

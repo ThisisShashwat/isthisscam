@@ -53,6 +53,7 @@ def extract_session_traits(thread_id, session, transcript):
                     Memories(thread_id=thread_id, session=session, about_viewer=True, type="trait", confidence="high",
                              inferred=False, tags=[item.category], content=item.content))
 
+
             change_session_status(db, thread_id, session, True, field="traits_done")
 
 

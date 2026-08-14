@@ -107,6 +107,6 @@ def change_session_status(db, thread_id, session, to_status, field="done"):
     status = db.get(SessionStatus, (thread_id, session))
 
     if status:
-        status.done = to_status
+        setattr(status, field, to_status)
     else:
-        db.add(SessionStatus(thread_id=thread_id, session=session, done=to_status, **{field: to_status}))
+        db.add(SessionStatus(thread_id=thread_id, session=session,  **{field: to_status}))

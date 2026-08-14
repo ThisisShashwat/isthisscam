@@ -4,7 +4,7 @@ from sqlmodel import select
 from utils.db_utils import engine
 from sessions.extract_memories import get_pending_sessions, build_session_transcript
 from sessions.extract_personality_llm import extract_session_traits, consolidate_traits
-from utils.models import Memories
+from utils.models import Memories, PersonalityProfile
 
 
 def build_traits_input(thread_id):
@@ -20,10 +20,12 @@ def build_traits_input(thread_id):
 
         return "\n".join(lines)
 
+
 def extract_personality(thread_id):
     traits_changed = False
 
     for session in get_pending_sessions(thread_id, field="traits_done"):
+        print(session)
         trascript = build_session_transcript(thread_id, session)
         extract_session_traits(thread_id, session, trascript)
         traits_changed = True
@@ -31,3 +33,7 @@ def extract_personality(thread_id):
     if traits_changed:
         traits_input = build_traits_input(thread_id)
         consolidate_traits(thread_id, traits_input)
+
+    with Session(engine) as session:
+        profile = session.get(PersonalityProfile, thread_id)
+        return profile.content if profile else ""

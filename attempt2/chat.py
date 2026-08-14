@@ -1,5 +1,9 @@
+import threading
+
 from sqlmodel import Session
 
+from ai.llm_pipeline import run_turn
+from config import DEBOUNCE_SECONDS, DEBUG
 from utils.db_utils import init_db, engine
 from sessions.extract_memories import extract_memories
 from sessions.extract_personality import extract_personality
@@ -15,6 +19,19 @@ print("after getclient")
 
 THREAD_ID = get_thread_id(cl, test=False)
 
+pending_messages = {}
+pending_timers = {}
+
+def flush(thread_id):
+    messages = pending_messages.pop(thread_id, [])
+    pending_timers.pop(thread_id, None)
+
+    if not messages:
+        return
+
+    draft = run_turn(thread_id, messages, personality)
+    print(draft.model_dump() if draft else None)
+
 
 def handle_direct_message(payload):
     try:
@@ -27,6 +44,29 @@ def handle_direct_message(payload):
         with Session(engine) as session:
             with session.begin():
                 session.merge(extracted_msg)
+
+        thread_id = extracted_msg.thread_id
+        if DEBUG: thread_id = get_thread_id(cl, test=True)
+
+        if extracted_msg.is_sent_by_viewer:
+            old_timer = pending_timers.pop(thread_id, None)
+            if old_timer:
+                old_timer.cancel()
+
+            pending_messages.pop(thread_id, None)
+            return
+
+        pending_messages.setdefault(thread_id, []).append(extracted_msg)
+
+        old_timer = pending_timers.get(thread_id)
+        if old_timer:
+            old_timer.cancel()
+
+        timer = threading.Timer(DEBOUNCE_SECONDS, flush, [thread_id])
+        timer.daemon = True
+        pending_timers[thread_id] = timer
+        timer.start()
+
     except Exception as e:
         print(e)
 
@@ -36,22 +76,20 @@ init_db()
 print("Done")
 
 print("Stating ingest_new_messages")
-ingest_new_messages(cl, THREAD_ID)
+# ingest_new_messages(cl, THREAD_ID)
 print("Done")
 
 print("Stating recalculate_sessions")
-recalculate_session(THREAD_ID)
+# recalculate_session(THREAD_ID)
 print("Done")
 
 print("Stating extract_memories")
-extract_memories(THREAD_ID)
+# extract_memories(THREAD_ID)
 print("Done")
 
 print("Stating extract_personality")
-extract_personality(THREAD_ID)
+personality = extract_personality(THREAD_ID)
 print("Done")
-
-exit()
 
 cl.realtime_on("message", handle_direct_message)
 

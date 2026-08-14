@@ -45,7 +45,7 @@ class ToneOutput(BaseModel):
     items: list[ToneItem]
 
 
-class GuestResult(BaseModel):
+class GuardResult(BaseModel):
     approved: bool
     reason: Optional[str] = None
 
@@ -144,7 +144,7 @@ def run_guard(recent_context, draft):
     user_content = f"Recent conversation:\n{recent_context}\n\nDraft:\n{draft.model_dump_json()}"
 
     return client.chat.completions.create(  # type: ignore
-        model=GUARD_MODEL, response_model=GuestResult, messages=[
+        model=GUARD_MODEL, response_model=GuardResult, messages=[
             {"role": "system", "content": GUARD_PROMPT},
             {"role": "user", "content": user_content},
         ],)
